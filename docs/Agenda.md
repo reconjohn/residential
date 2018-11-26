@@ -2,13 +2,16 @@
 title: "Agenda"
 author: "Yohan Min"
 date: "November 26, 2018"
-output: 
+output:
   html_document:
-    preserve_yaml: true
-    toc: true
-    toc_float: true
-    keep_md: true
-
+    keep_md: yes
+    preserve_yaml: yes
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 
