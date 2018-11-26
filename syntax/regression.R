@@ -33,8 +33,8 @@ View(fct)
 str(fct)
 corrplot(cor(fct), method = "ellipse")
 
-fa.parallel(fct,fa="both",n.iter=50)
-fa <- fa(fct,nfactors=2,rotate="promax",fm="ml")
+fa.parallel(fct,fa="fa",n.iter=50)
+fa <- fa(fct,nfactors=3,rotate="promax",fm="ml")
 fa
 
 factor.plot(fa, labels=rownames(fa$loadings))
@@ -42,15 +42,18 @@ fa.diagram(fa,simple=T)
 dat <- fa$scores
 dim(dat)
 
-kmeans<-kmeans(dat,center=2)
-kmeans
+dim(potential)
+plot(dat[,1], potential[[16]])
+
+summary(lm(potential[[16]] ~ dat[,1] + dat[,2] + dat[,3]))
+
+
+kmeans <- kmeans(dat,center=3)
 summary(kmeans) # slots in kmeans object
 kmeans$centers # centroids of clusters
-#number of samples in each cluster
-table(kmeans$cluster)
-kmeans$centers
-Group1<-kmeans$centers[1,]
-Group2<-kmeans$centers[2,]
+table(kmeans$cluster) #number of samples in each cluster
+Group1 <- kmeans$centers[1,]
+Group2 <- kmeans$centers[2,]
 plot(Group1,Group2,type="n")
 text(Group1,Group2, labels=colnames(dat))
 pairs(dat, col=kmeans$cluster)
@@ -64,8 +67,6 @@ plot(1:9, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of sq
 
 library(rgl)
 plot3d(fa$scores, col = kmeans$cluster)
-plot3d(dat, col = kmeans$cluster)
-plot3d(fa$loadings, col = kmeans$cluster)
 
 
 reg <- lm(sol_instl ~ .,potential[-c(1,2,6,7,8,9)])
@@ -73,4 +74,5 @@ stepAIC(reg)
 
 summary(lm(formula = sol_instl ~ hu_rnt + hu_med_val + 
              black, data = potential[-c(1, 2, 6, 7, 8, 9)]))
+
 
