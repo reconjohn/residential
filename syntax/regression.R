@@ -9,43 +9,45 @@ library(stringr)
 library(psych)
 library (cluster)
 library(reshape)
-library(ggplot2)
+library(reshape2)
 library(som)
 library(GPArotation)
 library(corrplot)
 library(tibble)
-library(dplyr)
-library(reshape2)
-library(lubridate)
-library(zoo)
-library(lmtest)
 library(MASS)
 
-potential <- read_csv(file = "./data/drived/potential.csv")
+load("./data/drived/wrk.Rdata")
+View(fin)
+str(fin)
 
-View(potential)
-str(potential)
-
-fct <- potential %>% 
-  select(-geoid, -hu, -pop_total, -hu_blt2010, -`MWh/hh_low_mf_own`, -lihtc_qualified, -sol_instl)
+### cor plot
+fct <- fin %>% 
+  select(-geoid, -hu, -pop_total, -hu_blt2010, -`MWh/hh_low_mf_own`, -lihtc_qualified)
 
 View(fct)
 str(fct)
 corrplot(cor(fct), method = "ellipse")
 
+### parallel plot
+fct <- fin %>% 
+  select(-geoid, -hu, -pop_total, -hu_blt2010, -`MWh/hh_low_mf_own`, -lihtc_qualified, -sol_instl)
+
 fa.parallel(fct,fa="fa",n.iter=50)
+
+## FA analysis
 fa <- fa(fct,nfactors=3,rotate="promax",fm="ml")
-fa
 
 factor.plot(fa, labels=rownames(fa$loadings))
 fa.diagram(fa,simple=T)
+
 dat <- fa$scores
 dim(dat)
+dim(fin)
+plot(dat[,1], fin[[16]], xlab = "The 1st factor", ylab = "Solar installation")
+summary(lm(fin[[16]] ~ dat[,1] + dat[,2] + dat[,3]))
 
-dim(potential)
-plot(dat[,1], potential[[16]])
-
-summary(lm(potential[[16]] ~ dat[,1] + dat[,2] + dat[,3]))
+reg <- lm(fin[[16]] ~ dat[,1] + dat[,2] + dat[,3])
+stepAIC(reg)
 
 
 kmeans <- kmeans(dat,center=3)
@@ -69,9 +71,8 @@ library(rgl)
 plot3d(fa$scores, col = kmeans$cluster)
 
 
-reg <- lm(sol_instl ~ .,potential[-c(1,2,6,7,8,9)])
+reg <- lm(sol_instl ~ .,fin[-c(1,2,6,7,8,9)])
 stepAIC(reg)
 
 summary(lm(formula = sol_instl ~ hu_rnt + hu_med_val + 
-             black, data = potential[-c(1, 2, 6, 7, 8, 9)]))
-
+             black, data = fin[-c(1, 2, 6, 7, 8, 9)]))

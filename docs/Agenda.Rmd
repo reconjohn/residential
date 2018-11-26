@@ -1,10 +1,8 @@
 ---
-title: "Residential solar in Seattle"
+title: "Agenda"
 author: "Yohan Min"
-date: "November 25, 2018"
-output: 
-  ioslides_presentation: 
-    keep_md: yes
+date: "November 26, 2018"
+output: html_document
 ---
 
 ```{r setup, include=FALSE, echo= F}
@@ -152,14 +150,17 @@ summary(lm(formula = sol_instl ~ hu_rnt + hu_med_val +
 
 ## Residual from the OLS 
 
-![optional caption text](Residual.jpg)
+![Residual mapping](./Figs/Residual.jpg)
 
+## Geographically weighted regression (GWR)
+![Residual mapping for GWR](./Figs/Residual-GWR.jpg)
 
-```{r}
+## Geographically weighted impact 
+![Rental proportion](./Figs/Rental-w.jpg)
 
+![House median value](./Figs/H-value-w.jpg)
 
-```
-
+![Black people proportion](./Figs/Black-w.jpg)
 
 ## Factor analysis (Parallel screen) 
 
@@ -229,4 +230,5 @@ library(rgl)
 plot3d(fa$scores, col = kmeans$cluster)
 ```
 
+![](./Figs/3D.jpg)
 
