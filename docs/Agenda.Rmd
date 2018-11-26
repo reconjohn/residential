@@ -2,7 +2,13 @@
 title: "Agenda"
 author: "Yohan Min"
 date: "November 26, 2018"
-output: html_document
+output: 
+  html_document:
+    preserve_yaml: true
+    toc: true
+    toc_float: true
+    keep_md: true
+
 ---
 
 ```{r setup, include=FALSE, echo= F}
