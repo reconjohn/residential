@@ -46,6 +46,6 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ## Histograms of multiple variables 
 
-![](RE_PT_files/figure-html/unnamed-chunk-5-1.png)<!-- -->![](RE_PT_files/figure-html/unnamed-chunk-5-2.png)<!-- -->
+![](RE_PT_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 

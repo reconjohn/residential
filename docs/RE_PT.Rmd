@@ -122,8 +122,8 @@ ggplot(wrk, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color =
 
 ## Histograms of multiple variables 
 
-```{r}
-par(mfrow = c(3,4))
+```{r, fig.height=5}
+par(mfrow = c(3,5))
 fhist <- fin[, c(-1,-8)]
 for(i in 1:length(fhist)){
   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
