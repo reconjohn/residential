@@ -7,6 +7,9 @@ library(forcats)
 library(pander)
 library(stringr)
 
+load("./data/drived/wrk.Rdata")
+
+## solar installation status 
 data <- read_csv(file = "./data/drived/county_data.csv")
 View(data)
 class(data)
@@ -30,6 +33,8 @@ View(wrk)
 str(wrk)
 summary(wrk)
 
+
+### plot!
 ggplot(wrk, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
@@ -42,6 +47,8 @@ ggplot(wrk, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color =
   theme_bw() + theme(legend.position = c(0.2, 0.3),
                      legend.background = element_rect(color = 1))
 
+
+## data cleaning for arcGIS analysis
 eff <- wrk %>% 
   filter(`Income class` == "low" & type == "mf" & own == "own") %>% 
   select(geoid, `MWh/hh_low_mf_own` = `MWh/house hold`)
@@ -86,9 +93,11 @@ View(fin)
 str(fin)
 summary(fin)
 fin <- fin[!is.na(fin$hu_med_val),] 
-write_csv(fin, path = "./data/drived/potential.csv")
 
-fhist <- fin[, c(-1,-7)]
+### plot!
+fin <- read_csv("./data/drived/potential.csv")
+str(fin)
+fhist <- fin[, c(-1,-8)]
 par(mfrow=c(2,2))
 for(i in 1:length(fhist)){
   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
@@ -97,14 +106,12 @@ for(i in 1:length(fhist)){
   text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
 }
 
-
-spatial <- read_csv(file = "./data/raw/spatial.csv")
+## data cleaning for time series
+spatial <- read_csv(file = "./data/drived/spatial.csv")
 str(spatial)
-head(data)
-View(spa)
+head(spatial)
 
 spa <- spatial %>% 
-  rename(geoid = fin__geoid) %>% 
   filter(!is.na(geoid)) %>% 
   mutate(date = str_replace(CompletedD, " 0:00$", "") %>% 
            mdy()) %>% 
@@ -123,9 +130,8 @@ temp$above20 <- parse_factor(temp$above20, levels = c("top", "nope"))
 temp_spatial <- spa %>% 
   left_join(temp, by= "geoid")
 
-write_csv(temp_spatial, path = "./data/drived/temp_spatial.csv")
-  
-spa %>% 
+### plot! 
+temp_spatial %>% 
   filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
   ggplot(aes(x = date, y = sum, group = geoid, color = above20))+
   geom_line(size = 1, alpha = 0.4)+
@@ -136,4 +142,8 @@ spa %>%
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
+save(wrk, fin, temp_spatial, file = "./data/drived/wrk.Rdata")
+load("./data/drived/wrk.Rdata")
 
+wrk
+rm(list = ls())

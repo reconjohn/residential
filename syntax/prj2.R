@@ -6,7 +6,8 @@ library(lubridate)
 library(forcats)
 library(pander)
 library(stringr)
-data <- read_csv(file = "Electrical_Permits.csv")
+
+data <- read_csv(file = "./data/raw/Electrical_Permits.csv")
 str(data)
 head(data)
 View(data)
@@ -21,6 +22,7 @@ elec <- data %>%
   select(Class,Description,CompletedDate,
          ContractorCompanyName,Latitude,Longitude)
 
+### plot
 elec %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Class, year) %>% 
@@ -49,7 +51,7 @@ top <- elec %>%
   arrange(desc(n)) %>% 
   mutate('top installer' = ifelse(n > 34, "Y", "N"))
 
-
+### plot
 elec %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Installer, year) %>% 
@@ -69,4 +71,4 @@ elec %>%
 install <- elec %>% 
   select(-ContractorCompanyName, -Description)
 
-write_csv(install, path = "install.csv")
+save(elec, install, top, file = "./data/drived/install.Rdata")

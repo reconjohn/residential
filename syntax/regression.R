@@ -75,4 +75,3 @@ stepAIC(reg)
 summary(lm(formula = sol_instl ~ hu_rnt + hu_med_val + 
              black, data = potential[-c(1, 2, 6, 7, 8, 9)]))
 
-
