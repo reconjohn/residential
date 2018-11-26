@@ -56,34 +56,36 @@ systems and safety monitors.
 
 ## Solar installation trend in Seattle
 
-![](Agenda_files/figure-html/load data-1.png)<!-- -->
 
-## Solar installation trend by contractors 
 
 ![](Agenda_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 
-
-## Cumulative solar installation per census track
+## Solar installation trend by contractors 
 
 ![](Agenda_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 
+## Cumulative solar installation per census track
+
+![](Agenda_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+
 ## Residential solar potential (MWh) in Seattle
 
-![](Agenda_files/figure-html/unnamed-chunk-3-1.svg)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-4-1.svg)<!-- -->
 
 ## Residential solar potential (MWh/ household) in Seattle
 
-![](Agenda_files/figure-html/unnamed-chunk-4-1.svg)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-5-1.svg)<!-- -->
 
 
 ## Histograms of multiple variables 
 
-![](Agenda_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ## Cor plot
 
-![](Agenda_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 
 ## Regression
@@ -129,7 +131,7 @@ systems and safety monitors.
 
 ## Factor analysis (Parallel screen) 
 
-![](Agenda_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 ```
 ## Parallel analysis suggests that the number of factors =  4  and the number of components =  NA
@@ -137,15 +139,15 @@ systems and safety monitors.
 
 ## Factor analysis (Plot)
 
-![](Agenda_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 ## Factor analysis (Diagram)
 
-![](Agenda_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 ## Factor correlation for solar installation
 
-![](Agenda_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 ## Factor regression 
 
@@ -176,18 +178,18 @@ systems and safety monitors.
 
 ```
 ##          ML2        ML3        ML1
-## 1 -0.1748794  0.3173398  1.5743013
-## 2  0.8446908 -0.6505453 -0.4342311
-## 3 -0.7429633  0.4825947 -0.3462607
+## 1 -0.6885333  0.4305238 -0.1563880
+## 2 -0.4289458  0.8822497  2.5790644
+## 3  0.8218458 -0.6197500 -0.2747965
 ```
 
 ```
 ## 
 ##  1  2  3 
-## 26 52 53
+## 63 10 58
 ```
 
-![](Agenda_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 ## Cluster within cluster sum of squares (WCSS)
 
@@ -196,10 +198,10 @@ systems and safety monitors.
 ## [1] 251.739
 ```
 
-![](Agenda_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 ## Cluster plot
-![](Agenda_files/figure-html/unnamed-chunk-15-1.png)<!-- -->![](Agenda_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
+![](Agenda_files/figure-html/unnamed-chunk-16-1.png)<!-- -->![](Agenda_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
 
 ## 3D plot
 

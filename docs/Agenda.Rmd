@@ -79,6 +79,9 @@ systems and safety monitors.
 ```{r load data}
 load("../data/drived/wrk.Rdata")
 load("../data/drived/install.Rdata")
+```
+
+```{r}
 
 elec %>% 
   mutate(year = year(CompletedDate)) %>% 
