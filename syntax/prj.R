@@ -6,47 +6,38 @@ library(lubridate)
 library(forcats)
 library(pander)
 library(stringr)
-data <- read_csv(file = "seeds_ii_replica.csv")
+
+data <- read_csv(file = "./data/raw/seeds_ii_replica.csv")
 str(data)
 head(data)
 View(data)
 
+## county
 county <- data %>% 
   filter(county_name =="King County") %>% 
   select(geoid,ends_with("hh"),ends_with("mwh"),hh_med_income,
-         hh_gini_index,pop_total,hu_own,hu_rent,hu_vintage_2010toafter,lihtc_qualified,-pct_eli_hh,
+         hh_gini_index,pop_total,pop_caucasian,pop25_some_college_plus,
+         hu_own,hu_rent,hu_monthly_owner_costs_greaterthan_1000dlrs,hu_med_val, hu_no_mortgage,
+         hu_vintage_1960to1970, hu_vintage_1940to1959, hu_vintage_1939toearlier,lihtc_qualified,-pct_eli_hh,
          -ends_with("elep_hh"))
 str(county)
-head(county)
-View(county)
-write_csv(county, path = "county.csv")
+county$hh_med_income[is.na(county$hh_med_income)] = 7115
 
-county %>% 
-  gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>% 
-  select(geoid, class, mwh) %>% 
-  ggplot(aes(x = mwh)) +
-  geom_histogram(binwidth = 2) +
-  facet_wrap( ~ class, nrow = 5) +
-  theme_minimal() + xlim(0,6000) + ylim(0,10)
-  theme(strip.text.x = element_text(size = rel(0.6))) +
-  ylab("Count of Incidents") + xlab("MWh")
+## Seattle 
+seattle <- county %>% 
+  filter(geoid >= 53033000100, geoid <= 53033012100, !is.na(hu_med_val)) 
+summary(seattle)
 
-
-county %>% 
-  gather(class, hh, very_low_mf_own_hh:high_sf_rent_hh) %>% 
-  select(geoid, class, hh) %>% 
-  ggplot(aes(x = hh)) +
-  geom_histogram(binwidth = 2) +
-  facet_wrap( ~ class, nrow = 5) +
-  theme_minimal() + xlim(0,1500) + ylim(0,50)
-  theme(strip.text.x = element_text(size = rel(0.6))) +
-  ylab("Count of Incidents") + xlab("Household count")
-
-
-county_simple <- county %>% 
+seattle_simple <- seattle %>% 
   gather(char,val, very_low_mf_own_hh:high_sf_rent_mwh) %>% 
-  mutate(hu_rnt = hu_rent/ (hu_rent + hu_own),
-         hu_blt2010 = hu_vintage_2010toafter/ (hu_rent + hu_own),
+  mutate(hu = hu_rent + hu_own,
+         hu_own = hu_own/ hu,
+         hu_blt1970 = (hu_vintage_1960to1970+hu_vintage_1940to1959+hu_vintage_1939toearlier)/ hu,
+         hu_no_mor = hu_no_mortgage/ hu,
+         hu_ex_1000 = hu_monthly_owner_costs_greaterthan_1000dlrs/ hu,
+         edu = pop25_some_college_plus/ pop_total,
+         wh_race = pop_caucasian/ pop_total,
+         lihtc = factor(lihtc_qualified), 
          incomeclass = case_when(
            substr(char, 1,4) == "very" ~ "verylow",
            substr(char, 1,3) == "low" ~ "low",
@@ -56,83 +47,79 @@ county_simple <- county %>%
          type = ifelse(str_detect(char, "mf"), "mf", "sf"),
          own = ifelse(str_detect(char, "own"), "own", "rent"),
          sep = ifelse(str_detect(char, "hh"), "hh", "mwh")) %>% 
-  spread(sep, val) 
+  spread(sep, val) %>% 
+  select(geoid, incomeclass, type, own, hh, mwh, 
+         hu_own, hu_blt1970, hu_no_mor,hu_med_val, hu_ex_1000, 
+         edu, wh_race, hh_med_income, hh_gini_index,lihtc) %>% 
+  mutate_at(vars(type,own), funs(factor)) 
 
-county_data <- county_simple %>% 
+seattle_simple <- seattle_simple %>% 
   filter(!is.na(hh)) %>% 
-  select(geoid,incomeclass,type,own,hh) %>% 
-  inner_join(county_simple %>% 
-               filter(!is.na(mwh)), 
-             by = c("geoid","incomeclass","type","own")) %>% 
-  rename(hh = hh.x) %>% 
-  select(geoid,incomeclass,type,own,hh,mwh,hh_med_income,
-         hh_gini_index,hu_rnt,hu_blt2010,pop_total,lihtc_qualified)
+  select(geoid, incomeclass, type, own, hh) %>% 
+  inner_join(seattle_simple %>% 
+               filter(!is.na(mwh)) %>% 
+               select(-hh), by = c("geoid", "incomeclass", "type", "own"))
+  
+View(seattle_simple)
+str(seattle_simple)
+summary(seattle_simple)
 
-write_csv(county_data, path = "county_data.csv")
-
-
-data <- read_csv(file = "county_data.csv")
-View(data)
-class(data)
-lapply(data, class) %>% 
-  pander(style = "rmarkdown", caption = "summary table")
-
-summary(data)
-data$hh_med_income[is.na(data$hh_med_income)] = 12300
-write_csv(data, path = "data.csv")
-
-wrk <- data %>% 
+## summary 
+wrk <- seattle_simple %>% 
   mutate(`Income class` = 
-           parse_factor(ifelse(incomeclass %in% c("verylow", "low", "mod"), "low", "high"),
-                        levels = NULL)) %>% 
+           parse_factor(ifelse(incomeclass %in% c("verylow", "low", "mod"), "low", incomeclass),
+                        levels = c("low", "mid", "high"))) %>% 
   group_by(geoid, `Income class`, type, own) %>% 
   summarise(shh = sum(hh), "Total MWh" = sum(mwh)) %>% 
-  mutate(`MWh/house hold` = `Total MWh`/shh)
-View(wrk)
-str(wrk)
+  mutate(`MWh/house hold` = `Total MWh`/shh) %>% 
+  mutate(`MWh/house hold` = ifelse(is.nan(`MWh/house hold`), 0, `MWh/house hold`))
 
-ggplot(wrk, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
+pot <- wrk %>% 
+  left_join(wrk %>% 
+              group_by(geoid) %>% 
+              summarise(hh_tot = sum(shh)), by = "geoid") %>% 
+  mutate(hh_prp = shh/ hh_tot)
+
+## ggplot 
+ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
   theme_bw() + theme(legend.position = c(0.7, 0.3),
                      legend.background = element_rect(color = 1))
 
-ggplot(wrk, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) + 
+## ggplot 
+ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
   theme_bw() + theme(legend.position = c(0.2, 0.3),
                      legend.background = element_rect(color = 1))
 
-eff <- wrk %>% 
-  filter(`Income class` == "low" & type == "mf" & own == "own") %>% 
-  select(geoid, `MWh/hh_low_mf_own` = `MWh/house hold`)
-eff <- eff[,3:4]
-View(eff)
+## ggplot 
+ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) + 
+  facet_grid(type ~ own) +
+  geom_point(alpha = 0.3, position = position_jitter(width = 0.5)) + 
+  theme_bw() + ylab("Household proportion") +
+  theme(legend.position = c(0.8, 0.3),
+                     legend.background = element_rect(color = 1))
 
-snd <- wrk %>% 
-  filter(`Income class` == "low" & type == "mf" & own == "rent") %>% 
-  select(geoid, `MWh_low_mf_rnt` = `Total MWh`)
-snd <- snd[,3:4]
-
-trd <- wrk %>% 
+rich <- pot %>% 
   filter(`Income class` == "high" & type == "sf" & own == "own") %>% 
-  select(geoid, `MWh_high_sf_own` =`Total MWh`)
-trd <- trd[,3:4]
+  select(geoid, `hh_high_sf_own` = hh_prp)
+rich <- rich[,3:4]
 
-fin <- data %>% 
-  filter(incomeclass == "low" & type == "mf" & own == "own") %>% 
-  select(geoid, hh_med_income:lihtc_qualified) %>% 
-  inner_join(eff, by = "geoid") %>% 
-  inner_join(snd, by = "geoid") %>% 
-  inner_join(trd, by = "geoid")
-View(fin)
-str(fin)
-summary(fin)
-fin <- fin[!is.na(fin$`MWh/hh_low_mf_own`),]
-write_csv(fin, path = "fin.csv")
+hu_mwh <- pot %>% 
+  group_by(geoid) %>% 
+  summarise(hu_mwh = sum(`MWh/house hold`))
 
-fhist <- fin[, c(-1,-7)]
-par(mfrow=c(2,4))
+regr <- seattle_simple %>% 
+  filter(incomeclass == "low", type == "mf", own == "rent") %>% 
+  inner_join(rich, by = "geoid") %>% 
+  inner_join(hu_mwh, by = "geoid") %>% 
+  select(-incomeclass, -type, -own, -hh, -mwh)
+
+## Plot
+fhist <- regr[, c(-1, -11)]
+par(mfrow=c(3,4))
 for(i in 1:length(fhist)){
   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
        xlab= names(fhist)[i], col="gold")
@@ -140,4 +127,37 @@ for(i in 1:length(fhist)){
   text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
 }
 
+## for testing 
+m <- regr[, -11]
+m %>% 
+  gather(class, value, hu_own:hu_mwh) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram(aes(y = ..density..), binwidth = 0.02) +
+  facet_wrap( ~ class) +
+  scale_x_log10()
 
+seattle %>% 
+  gather(class, hh, very_low_mf_own_hh:high_sf_rent_hh) %>% 
+  select(geoid, class, hh) %>% 
+  ggplot(aes(x = hh)) +
+  geom_histogram(binwidth = 50) +
+  facet_wrap( ~ class, nrow = 5) +
+  theme_minimal() + xlim(-100,1500)
+
+seattle %>% 
+  gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>% 
+  select(geoid, class, mwh) %>% 
+  mutate(class = parse_factor(class, levels = names(seattle))) %>% 
+  mutate(cl = ifelse(str_detect(class, "verylow|low|mod"), "low",
+                                 ifelse(str_detect(class, "mid"), "mid", 
+                                        ifelse(str_detect(class, "high"), "high", NA)))) %>%
+  mutate(cl = parse_factor(cl, levels = c("low", "mid", "high"))) %>% 
+  ggplot(aes(x = class, y = mwh, color = class)) +
+  geom_boxplot() +
+  facet_wrap( ~ cl) +
+  scale_y_log10() +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+      axis.ticks.x = element_blank())
+
+save(county, seattle, seattle_simple, pot, regr, file = "./data/derived/prj1.Rdata")

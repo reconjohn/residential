@@ -17,42 +17,41 @@ elec <- data %>%
          str_detect(Description, "Solar|solar|SOLAR"),
          !is.na(CompletedDate)) %>% 
   mutate(PermitClass = parse_factor(PermitClass, levels = NULL)) %>% 
-  mutate(Class = recode(PermitClass, `Single Family/Duplex` = "Single family",
+  mutate(Class = recode(PermitClass, `Single Family/Duplex` = "single family",
                         Multifamiliy = "multifamily")) %>% 
   select(Class,Description,CompletedDate,
-         ContractorCompanyName,Latitude,Longitude)
+         ContractorCompanyName,Latitude,Longitude) 
 
-### plot
-elec %>% 
+lv <- elec %>% 
+  group_by(ContractorCompanyName) %>% 
+  summarize(n_events = n()) %>% 
+  arrange(desc(n_events))
+
+inst <- elec %>% 
+  mutate(Installer = parse_factor(ContractorCompanyName, levels = lv[[1]]))
+levels(inst$Installer)
+
+## plot
+inst %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Class, year) %>% 
   summarise(install = n()) %>% 
   ggplot(aes(x = year, y = install, group = Class, color = Class))+
-  geom_line()+
+  geom_line(size = 1)+
   xlab("Year") + ylab("Number of installation") +
   theme_bw() +
   theme(legend.position = c(0.90, 0.25),
         legend.background = element_rect(fill="transparent")) +
   scale_x_continuous(breaks = seq(2000, 2019, by = 1))
-  
 
-tt <-elec %>% 
-  group_by(ContractorCompanyName) %>% 
-  summarize(n_events = n()) %>% 
-  arrange(desc(n_events))
-
-elec <- elec %>% 
-  mutate(Installer = parse_factor(ContractorCompanyName, 
-                                  levels = tt$ContractorCompanyName))
-
-top <- elec %>% 
+top <- inst %>% 
   group_by(Installer) %>% 
   count() %>% 
   arrange(desc(n)) %>% 
   mutate('top installer' = ifelse(n > 34, "Y", "N"))
 
-### plot
-elec %>% 
+## plot
+inst %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Installer, year) %>% 
   summarise(install = n()) %>% 
@@ -61,7 +60,7 @@ elec %>%
   filter(`top installer` == "Y") %>% 
   ggplot(aes(x = year, y = install, group = Installer, 
              color = Installer))+
-  geom_line(size = 2)+
+  geom_line(size = 1)+
   xlab("Year") + ylab("Number of installation") +
   theme_bw() +
   theme(legend.position = c(0.2, 0.7),
@@ -71,4 +70,4 @@ elec %>%
 install <- elec %>% 
   select(-ContractorCompanyName, -Description)
 
-save(elec, install, top, file = "./data/drived/install.Rdata")
+save(inst, install, top, file = "./data/derived/prj2.Rdata")

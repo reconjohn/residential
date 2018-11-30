@@ -1,7 +1,7 @@
 ---
 title: "Agenda"
 author: "Yohan Min"
-date: "November 26, 2018"
+date: "November 30, 2018"
 output:
   html_document:
     keep_md: yes
@@ -58,34 +58,44 @@ systems and safety monitors.
 
 
 
-![](Agenda_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
 
 ## Solar installation trend by contractors 
 
-![](Agenda_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
 
 ## Cumulative solar installation per census track
 
-![](Agenda_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+
+## Residential household in Seattle
+
+<img src="Agenda_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" />
 
 
 ## Residential solar potential (MWh) in Seattle
 
-![](Agenda_files/figure-html/unnamed-chunk-4-1.svg)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" />
 
 ## Residential solar potential (MWh/ household) in Seattle
 
-![](Agenda_files/figure-html/unnamed-chunk-5-1.svg)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" />
 
 
 ## Histograms of multiple variables 
 
-![](Agenda_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
+## Boxplot for overall potential solar
+
+<img src="Agenda_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+
 
 ## Cor plot
 
-![](Agenda_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 
 ## Regression
@@ -94,117 +104,165 @@ systems and safety monitors.
 ```
 ## 
 ## Call:
-## lm(formula = sol_instl ~ hu_rnt + hu_med_val + black, data = fin[-c(1, 
-##     2, 6, 7, 8, 9)])
+## lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regr[-c(1)])
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -8.0301 -1.7673 -0.4132  1.1725 14.2792 
+## -8.4964 -1.8188 -0.4623  1.1230 16.2559 
 ## 
 ## Coefficients:
 ##               Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  1.415e+01  1.770e+00   7.997 6.80e-13 ***
-## hu_rnt      -1.901e+01  1.692e+00 -11.236  < 2e-16 ***
-## hu_med_val   8.420e-06  1.953e-06   4.311 3.23e-05 ***
-## black        7.972e+00  3.218e+00   2.477   0.0146 *  
+## (Intercept) -1.984e+00  8.119e-01  -2.444   0.0159 *  
+## hu_med_val   3.905e-06  1.954e-06   1.998   0.0478 *  
+## hu_ex_1000   1.768e+01  1.594e+00  11.094   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 2.859 on 127 degrees of freedom
-## Multiple R-squared:  0.6207,	Adjusted R-squared:  0.6117 
-## F-statistic: 69.26 on 3 and 127 DF,  p-value: < 2.2e-16
+## Residual standard error: 2.875 on 128 degrees of freedom
+## Multiple R-squared:  0.6136,	Adjusted R-squared:  0.6076 
+## F-statistic: 101.6 on 2 and 128 DF,  p-value: < 2.2e-16
 ```
 
 ## Residual from the OLS 
+<center>
 
-![Residual mapping](./Figs/Residual.jpg)
+![OLS residual mapping](./Figs/OLS-resid.png){width=450px}
+
+</center>
 
 ## Geographically weighted regression (GWR)
-![Residual mapping for GWR](./Figs/Residual-GWR.jpg)
+<center>
+
+![Residual mapping for GWR](./Figs/GWR-resid.png){width=450px}
+
+</center>
 
 ## Geographically weighted impact 
-![Rental proportion](./Figs/Rental-w.jpg)
+<center>
 
-![House median value](./Figs/H-value-w.jpg)
+![Impact of housing median value](./Figs/coef1.png){width=450px}
 
-![Black people proportion](./Figs/Black-w.jpg)
+</center>
+
+<center>
+![impact of housing cost over $1k/ month](./Figs/coef2.png){width=450px}
+</center>
+
+<center>
+
+![Solar installation hotspot](./Figs/hotspot.png){width=450px}
+
+</center>
+
+<center>
+
+![Solar installation outlier](./Figs/outlier.png){width=450px}
+
+</center>
+
 
 ## Factor analysis (Parallel screen) 
 
-![](Agenda_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 ```
-## Parallel analysis suggests that the number of factors =  4  and the number of components =  NA
+## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA
 ```
 
 ## Factor analysis (Plot)
 
-![](Agenda_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 ## Factor analysis (Diagram)
 
-![](Agenda_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 ## Factor correlation for solar installation
 
-![](Agenda_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+```
+## [1] 131   3
+```
+
+<img src="Agenda_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 ## Factor regression 
 
 ```
 ## 
 ## Call:
-## lm(formula = fin[[16]] ~ dat[, 1] + dat[, 2] + dat[, 3])
+## lm(formula = regr[[14]] ~ dat[, 1] + dat[, 2] + dat[, 3])
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -6.2962 -2.0322 -0.5817  1.5500 17.9535 
+## -8.4394 -1.6916 -0.5028  1.0860 16.2534 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)   5.0904     0.2919  17.441  < 2e-16 ***
-## dat[, 1]      2.2605     0.3361   6.726 5.34e-10 ***
-## dat[, 2]     -1.1489     0.3472  -3.309  0.00122 ** 
-## dat[, 3]     -0.9088     0.3001  -3.028  0.00298 ** 
+## (Intercept)   5.0904     0.2531  20.112   <2e-16 ***
+## dat[, 1]      3.3447     0.3443   9.715   <2e-16 ***
+## dat[, 2]      0.6351     0.3127   2.031   0.0443 *  
+## dat[, 3]      0.3905     0.3147   1.241   0.2169    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 3.34 on 127 degrees of freedom
-## Multiple R-squared:  0.4823,	Adjusted R-squared:   0.47 
-## F-statistic: 39.44 on 3 and 127 DF,  p-value: < 2.2e-16
+## Residual standard error: 2.897 on 127 degrees of freedom
+## Multiple R-squared:  0.6106,	Adjusted R-squared:  0.6014 
+## F-statistic: 66.39 on 3 and 127 DF,  p-value: < 2.2e-16
 ```
 
-## Kmeans
-
-```
-##          ML2        ML3        ML1
-## 1 -0.6885333  0.4305238 -0.1563880
-## 2 -0.4289458  0.8822497  2.5790644
-## 3  0.8218458 -0.6197500 -0.2747965
-```
+## Cluster analysis
 
 ```
 ## 
 ##  1  2  3 
-## 63 10 58
+## 55 32 44
 ```
 
-![](Agenda_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 ## Cluster within cluster sum of squares (WCSS)
 
 
 ```
-## [1] 251.739
+## [1] 177.3648
 ```
 
-![](Agenda_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
+
+## Optimal cluster 
+
+<img src="Agenda_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
 ## Cluster plot
-![](Agenda_files/figure-html/unnamed-chunk-16-1.png)<!-- -->![](Agenda_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
+<img src="Agenda_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /><img src="Agenda_files/figure-html/unnamed-chunk-19-2.png" style="display: block; margin: auto;" />
 
 ## 3D plot
 
 
 ![](./Figs/3D.jpg)
 
+## Cluster with boxplot
+
+<img src="Agenda_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+
+## Cluster plot with smooth
+
+<img src="Agenda_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+
+## Data analysis 1
+
+<img src="Agenda_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
+
+
+## Data analysis 2
+<img src="Agenda_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
+
+## Data analysis 3
+<img src="Agenda_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" />
+
+<center>
+
+![Clustered census track](./Figs/cluster.png){width=450px}
+
+</center>
