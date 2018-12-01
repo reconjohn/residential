@@ -244,7 +244,9 @@ summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
 </center>
 
 <center>
+
 ![impact of housing cost over $1k/ month](./Figs/coef2.png){width=450px}
+
 </center>
 
 <center>

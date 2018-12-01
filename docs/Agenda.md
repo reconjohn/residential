@@ -145,7 +145,9 @@ systems and safety monitors.
 </center>
 
 <center>
+
 ![impact of housing cost over $1k/ month](./Figs/coef2.png){width=450px}
+
 </center>
 
 <center>
@@ -166,7 +168,7 @@ systems and safety monitors.
 <img src="Agenda_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 ```
-## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA
+## Parallel analysis suggests that the number of factors =  3  and the number of components =  NA
 ```
 
 ## Factor analysis (Plot)

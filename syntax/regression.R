@@ -14,7 +14,7 @@ library(som)
 library(GPArotation)
 library(corrplot)
 library(tibble)
-library(MASS)
+# library(MASS)
 library(GGally)
 
 ## MASS and dplyr clash each other for select()
@@ -49,7 +49,7 @@ plot(dat[,1], regr[[14]], xlab = "The 1st factor", ylab = "Solar installation")
 summary(lm(regr[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
 
 reg <- lm(regr[[14]] ~ dat[,1] + dat[,2] + dat[,3])
-stepAIC(reg)
+# stepAIC(reg)
 
 ## cluster 
 set.seed(5099)
@@ -106,7 +106,7 @@ View(c_reg)
 
 ## regression 
 reg <- lm(sol_instl ~ .,regr[-c(1)])
-stepAIC(reg)
+# stepAIC(reg)
 
 summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
            data = regr[-c(1)]))
@@ -129,5 +129,3 @@ ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
   geom_point(alpha = 0.4)+
   geom_smooth(span = 0.9)+ 
   theme_bw()
-
-write_csv(c_reg, path = "./data/derived/regr.csv")
