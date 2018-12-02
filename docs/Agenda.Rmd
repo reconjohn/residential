@@ -39,13 +39,13 @@ library(GGally)
 ## Energy code
 
 ### Title 24 vs. IECC
-연방정부 기준인 IECC 를 적어도 만족시키는 주정부 energy 기준이 있어야 하는데, CA 의 경우 2016 Building Energy Efficiency Standards Title 24, Part 6 이 2015 IECC 를 넘어서는 결과를 보여주고 있다. 
+Each state should satisfy at least the requirements from federal government's energy standard, which is in gerneral `International Energy Conservation Code (IECC)`. CA has a `2016 Building Energy Efficiency Standards Title 24, Part 6`, which exceeds the performance of 2015 IECC. 
 
 ### 2018 IECC 
-가장 최근 버전으로 - APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES) - solar ready 에 대한 조건이 있다. 
+The newly updated `APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES)` has solar ready requirements. 
 
 ### 2019 Residential Compliance Manual 
-CA 에서 나온 것으로, PV 설치를 강제하고 있고, 예외에 한에서 역시 solar ready 를 강제하고 있다. Seattle 이 경우 2017 residential code 가 해당. Residential 의 경우 solar ready 는 residential code 에 있는데, commercial 의 경우 solar ready 는 building code 가 아닌 energy code 에 있다. 참고로, single family 와 low rise multifamily 는 residential code (특별 building code 로 보면 될 듯), 그 외는 building code. 그리고 solar 를 직접 설치 했을 때는 NEC 의 electrical code 와 관계한 electrical permit 을 받아야 한다. 
+CA requires PV installation on the new construction and solar ready for those who are exempt from the PV installation. In Seattle, 2017 residential code is the one. Solar ready for `residential` is in residential code while for `commercial`, solar ready requirments is in enery code, not building code. For reference, single family and low rise multifamily is related to residential code (a kind of building code only for residential) otherwise, building code. Electrical permit, which is related to the electrical code from `NEC`, is required after solar PV is installed.
 
 > The California Energy Code, part 6 of the California Building Standards Code which is title 24 of the California Code of Regulations, also titled The Energy Efficiency Standards for Residential and Nonresidential Buildings, were created by the California Building Standards Commission in 1978 in response to a legislative mandate to reduce California's energy consumption. The standards are updated periodically by the California Energy Commission to allow consideration and possible incorporation of new energy efficiency technologies and methods. The California Energy Code (CEC) contains energy conservation standards applicable to most residential and nonresidential buildings throughout California, including schools. - solar ready, residential compliance manual.
 
@@ -53,8 +53,7 @@ CA 에서 나온 것으로, PV 설치를 강제하고 있고, 예외에 한에�
 
 ## OSHA
 
-* Roof slope: OSHA defines a low-slope roof as a roof having a slope of less than or equal to 4 inches of vertical rise for every 12 inches horizontal length (4:12) (1926.500(b)—definitions). This is important because the OSHA definition is used as a basis for implementing low-slope fall-protection measures, such as warningline
-systems and safety monitors.
+* Roof slope: OSHA defines a low-slope roof as a roof having a slope of less than or equal to 4 inches of vertical rise for every 12 inches horizontal length (4:12) (1926.500(b)—definitions). This is important because the OSHA definition is used as a basis for implementing low-slope fall-protection measures, such as warningline systems and safety monitors.
 
 * Ladder: angle 75 degree, one-quarter the working length of the ladder (a 1:4 ratio) (29 CFR 1926.1053(b)(5)(i)). 3 rungs (1 ft apart) above the roof, The side rails of the ladder generally must extend at least 3 feet above the upper landing surface that the worker is trying to access (29 CFR 1926.1053(b)(1)).
 
@@ -64,14 +63,14 @@ systems and safety monitors.
 ![Top 3 risks are related to solar installation on the roof](./Figs/PTD.jpg)
 
 ## Ideal design for safety from the interviews 
-* Roof pitch: lower than 5/12 – 7/12 to work easy, fall
-* Roof material: composition not to be slippery, fall
-* Roof structure: no obstruction no to be interrupted, trip, complexity
-* Roof condition: accessories pre-installed to reduce the scope, complexity
-* Anchor point: pre-installed to be efficient, fall
-* Access: low height, enough space for easier access, fall
-* Additional: setback, snow guard, guardrail to prevent fall
-* Electrical: micro inverter, conduit pre-run, reserving spaces, electric shock, complexity
+* Roof pitch: lower than 5/12 – 7/12 `to work easy - fall`
+* Roof material: composition `not to be slippery - fall`
+* Roof structure: no obstruction `not to be interrupted - trip, complexity`
+* Roof condition: accessories pre-installed `to reduce the scope - complexity`
+* Anchor point: pre-installed `to be efficient - fall`
+* Access: low height, `enough space for easier access - fall`
+* Additional: setback, snow guard, guardrail `fall`
+* Electrical: micro inverter, conduit pre-run, reserving spaces, `electric shock, complexity`
 
 
 ## Solar installation trend in Seattle
