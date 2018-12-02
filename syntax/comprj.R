@@ -6,8 +6,8 @@ library(lubridate)
 library(forcats)
 library(pander)
 library(stringr)
+library('quantmod')
 
-load("./data/derived/prj1.Rdata")
 instl <- read_csv(file = "./data/derived/spatial.csv")
 po <- read_csv(file = "./data/derived/potential.csv")
 
@@ -22,9 +22,10 @@ spa <- instl %>%
            mdy()) %>% 
   group_by(geoid, date) %>% 
   summarise(count = n()) %>% 
-  mutate(sum = cumsum(count)) %>% 
-  select(-count)
+  mutate(sum = cumsum(count))
 
+
+View(spa)
 temp <- spa %>% 
   group_by(geoid) %>% 
   summarise(max = max(sum)) %>% 
@@ -48,4 +49,23 @@ temp_spatial %>%
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
-save(regr, instl, temp_spatial, file = "./data/derived/prj3.Rdata")
+str(temp_spatial)
+t <- temp_spatial %>% 
+  mutate(year = year(date)) %>% 
+  group_by(geoid, year) %>% 
+  summarise(sum = sum(count)) %>% 
+  spread(geoid, sum)
+
+t[is.na(t)] <- 0
+
+ts <- t %>% 
+  gather(geoid,value, -year ) %>% 
+  group_by(geoid, year) %>% 
+  summarise(value = value) %>% 
+  mutate(sum = cumsum(value)) %>% 
+  mutate(year = as.Date(str_c("01/01/", as.character(year)), format = "%m/%d/%Y"))
+
+write_csv(ts, path = "./data/derived/ts.csv" )
+save(regr, instl, temp_spatial, ts, file = "./data/derived/prj3.Rdata")
+
+load("./data/derived/prj3.Rdata")
