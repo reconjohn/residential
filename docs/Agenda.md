@@ -19,17 +19,14 @@ output:
 ## Energy code
 
 ### Title 24 vs. IECC
-Each state should satisfy at least the requirements from federal government's energy standard, which is in gerneral `International Energy Conservation Code (IECC)`. CA has a `2016 Building Energy Efficiency Standards Title 24, Part 6`, which exceeds the performance of 2015 IECC. 
+Each state should satisfy at least the requirements from federal government's energy standard, which is in gerneral `International Energy Conservation Code (IECC)`. CA has a `2016 Building Energy Efficiency Standards Title 24, Part 6`, which exceeds the performance of 2015 IECC.
 
-### 2018 IECC 
-The newly updated `APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES)` has solar ready requirements. 
+### 2018 IECC
+The newly updated `APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES)` has solar ready requirements.
 
-### 2019 Residential Compliance Manual 
+### 2019 Residential Compliance Manual
 CA requires PV installation on the new construction and solar ready for those who are exempt from the PV installation. In Seattle, 2017 residential code is the one. Solar ready for `residential` is in residential code while for `commercial`, solar ready requirments is in enery code, not building code. For reference, single family and low rise multifamily is related to residential code (a kind of building code only for residential) otherwise, building code. Electrical permit, which is related to the electrical code from `NEC`, is required after solar PV is installed.
 
-> The California Energy Code, part 6 of the California Building Standards Code which is title 24 of the California Code of Regulations, also titled The Energy Efficiency Standards for Residential and Nonresidential Buildings, were created by the California Building Standards Commission in 1978 in response to a legislative mandate to reduce California's energy consumption. The standards are updated periodically by the California Energy Commission to allow consideration and possible incorporation of new energy efficiency technologies and methods. The California Energy Code (CEC) contains energy conservation standards applicable to most residential and nonresidential buildings throughout California, including schools. - solar ready, residential compliance manual.
-
-> There are 3 different kinds of building codes: private sector, federal sector, and international. The private sector codes are associated with state and local jurisdiction. States and local jurisdictions have different energy codes that they follow based on climate, geography, and many other contributing factors. The two primary baseline codes for the private sector are the International Energy Conservation Code (IECC), and the ANSI/ASHRAE/IESNA Standard 90.1 energy standard for Buildings Except Low-Rise Residential Buildings (ASHRAE 90.1).[4] States and local governments adopt and enforce these energy codes. The standards are published by national organizations such as ASHRAE. The International Code Council (ICC) develops the codes and standards used to construct residential and commercial buildings, including homes and schools.[5] Within the ICC is the IECC which is a subset of the ICC. The IECC is a model energy code, but it is written in mandatory, enforceable language, so that state and local jurisdictions can easily adopt the model as their energy code.[6] The IECC references several ASHRAE Standards, in particular the ASHRAE 90.1 for commercial building construction.
 
 ## OSHA
 
@@ -39,10 +36,10 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 * Anchor: OSHA standard regarding anchorages can be found in 29 CFR 1926.502(d)(15)
 
-## Risk per full-time workers 
+## Risk per full-time workers
 ![Top 3 risks are related to solar installation on the roof](./Figs/PTD.jpg)
 
-## Ideal design for safety from the interviews 
+## Ideal design for safety from the interviews
 * Roof pitch: lower than 5/12 – 7/12 `to work easy - fall`
 * Roof material: composition `not to be slippery - fall`
 * Roof structure: no obstruction `not to be interrupted - trip, complexity`
@@ -59,7 +56,7 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 <img src="Agenda_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
 
-## Solar installation trend by contractors 
+## Solar installation trend by contractors
 
 <img src="Agenda_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
@@ -83,7 +80,7 @@ CA requires PV installation on the new construction and solar ready for those wh
 <img src="Agenda_files/figure-html/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" />
 
 
-## Histograms of multiple variables 
+## Histograms of multiple variables
 
 <img src="Agenda_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
@@ -101,28 +98,28 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 
 ```
-## 
+##
 ## Call:
 ## lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regr[-c(1)])
-## 
+##
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -8.4964 -1.8188 -0.4623  1.1230 16.2559 
-## 
+##     Min      1Q  Median      3Q     Max
+## -8.4964 -1.8188 -0.4623  1.1230 16.2559
+##
 ## Coefficients:
-##               Estimate Std. Error t value Pr(>|t|)    
-## (Intercept) -1.984e+00  8.119e-01  -2.444   0.0159 *  
-## hu_med_val   3.905e-06  1.954e-06   1.998   0.0478 *  
+##               Estimate Std. Error t value Pr(>|t|)
+## (Intercept) -1.984e+00  8.119e-01  -2.444   0.0159 *
+## hu_med_val   3.905e-06  1.954e-06   1.998   0.0478 *
 ## hu_ex_1000   1.768e+01  1.594e+00  11.094   <2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
+##
 ## Residual standard error: 2.875 on 128 degrees of freedom
-## Multiple R-squared:  0.6136,	Adjusted R-squared:  0.6076 
+## Multiple R-squared:  0.6136,	Adjusted R-squared:  0.6076
 ## F-statistic: 101.6 on 2 and 128 DF,  p-value: < 2.2e-16
 ```
 
-## Residual from the OLS 
+## Residual from the OLS
 <center>
 
 ![OLS residual mapping](./Figs/OLS-resid.png){width=450px}
@@ -136,7 +133,7 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 </center>
 
-## Geographically weighted impact 
+## Geographically weighted impact
 <center>
 
 ![Impact of housing median value](./Figs/coef1.png){width=450px}
@@ -162,7 +159,7 @@ CA requires PV installation on the new construction and solar ready for those wh
 </center>
 
 
-## Factor analysis (Parallel screen) 
+## Factor analysis (Parallel screen)
 
 <img src="Agenda_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
@@ -187,36 +184,36 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 <img src="Agenda_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
-## Factor regression 
+## Factor regression
 
 ```
-## 
+##
 ## Call:
 ## lm(formula = regr[[14]] ~ dat[, 1] + dat[, 2] + dat[, 3])
-## 
+##
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -8.4394 -1.6916 -0.5028  1.0860 16.2534 
-## 
+##     Min      1Q  Median      3Q     Max
+## -8.4394 -1.6916 -0.5028  1.0860 16.2534
+##
 ## Coefficients:
-##             Estimate Std. Error t value Pr(>|t|)    
+##             Estimate Std. Error t value Pr(>|t|)
 ## (Intercept)   5.0904     0.2531  20.112   <2e-16 ***
 ## dat[, 1]      3.3447     0.3443   9.715   <2e-16 ***
-## dat[, 2]      0.6351     0.3127   2.031   0.0443 *  
-## dat[, 3]      0.3905     0.3147   1.241   0.2169    
+## dat[, 2]      0.6351     0.3127   2.031   0.0443 *
+## dat[, 3]      0.3905     0.3147   1.241   0.2169
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
+##
 ## Residual standard error: 2.897 on 127 degrees of freedom
-## Multiple R-squared:  0.6106,	Adjusted R-squared:  0.6014 
+## Multiple R-squared:  0.6106,	Adjusted R-squared:  0.6014
 ## F-statistic: 66.39 on 3 and 127 DF,  p-value: < 2.2e-16
 ```
 
 ## Cluster analysis
 
 ```
-## 
-##  1  2  3 
+##
+##  1  2  3
 ## 55 32 44
 ```
 
@@ -231,7 +228,7 @@ CA requires PV installation on the new construction and solar ready for those wh
 
 <img src="Agenda_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
 
-## Optimal cluster 
+## Optimal cluster
 
 <img src="Agenda_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
