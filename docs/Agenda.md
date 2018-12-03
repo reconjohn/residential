@@ -15,27 +15,6 @@ output:
 ---
 
 
-
-## Energy code
-
-### Title 24 vs. IECC
-Each state should satisfy at least the requirements from federal government's energy standard, which is in gerneral `International Energy Conservation Code (IECC)`. CA has a `2016 Building Energy Efficiency Standards Title 24, Part 6`, which exceeds the performance of 2015 IECC.
-
-### 2018 IECC
-The newly updated `APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES)` has solar ready requirements.
-
-### 2019 Residential Compliance Manual
-CA requires PV installation on the new construction and solar ready for those who are exempt from the PV installation. In Seattle, 2017 residential code is the one. Solar ready for `residential` is in residential code while for `commercial`, solar ready requirments is in enery code, not building code. For reference, single family and low rise multifamily is related to residential code (a kind of building code only for residential) otherwise, building code. Electrical permit, which is related to the electrical code from `NEC`, is required after solar PV is installed.
-
-
-## OSHA
-
-* Roof slope: OSHA defines a low-slope roof as a roof having a slope of less than or equal to 4 inches of vertical rise for every 12 inches horizontal length (4:12) (1926.500(b)—definitions). This is important because the OSHA definition is used as a basis for implementing low-slope fall-protection measures, such as warningline systems and safety monitors.
-
-* Ladder: angle 75 degree, one-quarter the working length of the ladder (a 1:4 ratio) (29 CFR 1926.1053(b)(5)(i)). 3 rungs (1 ft apart) above the roof, The side rails of the ladder generally must extend at least 3 feet above the upper landing surface that the worker is trying to access (29 CFR 1926.1053(b)(1)).
-
-* Anchor: OSHA standard regarding anchorages can be found in 29 CFR 1926.502(d)(15)
-
 ## Risk per full-time workers
 ![Top 3 risks are related to solar installation on the roof](./Figs/PTD.jpg)
 

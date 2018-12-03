@@ -36,33 +36,10 @@ library(GGally)
 # library(MASS)
 ```
 
-## Energy code
-
-### Title 24 vs. IECC
-Each state should satisfy at least the requirements from federal government's energy standard, which is in gerneral `International Energy Conservation Code (IECC)`. CA has a `2016 Building Energy Efficiency Standards Title 24, Part 6`, which exceeds the performance of 2015 IECC. 
-
-### 2018 IECC 
-The newly updated `APPENDIX RA SOLAR-READY PROVISIONS—DETACHED ONE- AND TWOFAMILY DWELLINGS, MULTIPLE SINGLE-FAMILY DWELLINGS (TOWNHOUSES)` has solar ready requirements. 
-
-### 2019 Residential Compliance Manual 
-CA requires PV installation on the new construction and solar ready for those who are exempt from the PV installation. In Seattle, 2017 residential code is the one. Solar ready for `residential` is in residential code while for `commercial`, solar ready requirments is in enery code, not building code. For reference, single family and low rise multifamily is related to residential code (a kind of building code only for residential) otherwise, building code. Electrical permit, which is related to the electrical code from `NEC`, is required after solar PV is installed.
-
-> The California Energy Code, part 6 of the California Building Standards Code which is title 24 of the California Code of Regulations, also titled The Energy Efficiency Standards for Residential and Nonresidential Buildings, were created by the California Building Standards Commission in 1978 in response to a legislative mandate to reduce California's energy consumption. The standards are updated periodically by the California Energy Commission to allow consideration and possible incorporation of new energy efficiency technologies and methods. The California Energy Code (CEC) contains energy conservation standards applicable to most residential and nonresidential buildings throughout California, including schools. - solar ready, residential compliance manual.
-
-> There are 3 different kinds of building codes: private sector, federal sector, and international. The private sector codes are associated with state and local jurisdiction. States and local jurisdictions have different energy codes that they follow based on climate, geography, and many other contributing factors. The two primary baseline codes for the private sector are the International Energy Conservation Code (IECC), and the ANSI/ASHRAE/IESNA Standard 90.1 energy standard for Buildings Except Low-Rise Residential Buildings (ASHRAE 90.1).[4] States and local governments adopt and enforce these energy codes. The standards are published by national organizations such as ASHRAE. The International Code Council (ICC) develops the codes and standards used to construct residential and commercial buildings, including homes and schools.[5] Within the ICC is the IECC which is a subset of the ICC. The IECC is a model energy code, but it is written in mandatory, enforceable language, so that state and local jurisdictions can easily adopt the model as their energy code.[6] The IECC references several ASHRAE Standards, in particular the ASHRAE 90.1 for commercial building construction.
-
-## OSHA
-
-* Roof slope: OSHA defines a low-slope roof as a roof having a slope of less than or equal to 4 inches of vertical rise for every 12 inches horizontal length (4:12) (1926.500(b)—definitions). This is important because the OSHA definition is used as a basis for implementing low-slope fall-protection measures, such as warningline systems and safety monitors.
-
-* Ladder: angle 75 degree, one-quarter the working length of the ladder (a 1:4 ratio) (29 CFR 1926.1053(b)(5)(i)). 3 rungs (1 ft apart) above the roof, The side rails of the ladder generally must extend at least 3 feet above the upper landing surface that the worker is trying to access (29 CFR 1926.1053(b)(1)).
-
-* Anchor: OSHA standard regarding anchorages can be found in 29 CFR 1926.502(d)(15)
-
-## Risk per full-time workers 
+## Risk per full-time workers
 ![Top 3 risks are related to solar installation on the roof](./Figs/PTD.jpg)
 
-## Ideal design for safety from the interviews 
+## Ideal design for safety from the interviews
 * Roof pitch: lower than 5/12 – 7/12 `to work easy - fall`
 * Roof material: composition `not to be slippery - fall`
 * Roof structure: no obstruction `not to be interrupted - trip, complexity`
@@ -83,10 +60,10 @@ load("../data/derived/prj3.Rdata")
 
 ```{r}
 
-inst %>% 
-  mutate(year = year(CompletedDate)) %>% 
-  group_by(Class, year) %>% 
-  summarise(install = n()) %>% 
+inst %>%
+  mutate(year = year(CompletedDate)) %>%
+  group_by(Class, year) %>%
+  summarise(install = n()) %>%
   ggplot(aes(x = year, y = install, group = Class, color = Class))+
   geom_line(size = 1)+
   xlab("Year") + ylab("Number of installation") +
@@ -96,17 +73,17 @@ inst %>%
   scale_x_continuous(breaks = seq(2000, 2019, by = 1))
 ```
 
-## Solar installation trend by contractors 
+## Solar installation trend by contractors
 
 ```{r}
-inst %>% 
-  mutate(year = year(CompletedDate)) %>% 
-  group_by(Installer, year) %>% 
-  summarise(install = n()) %>% 
-  arrange(desc(install)) %>% 
-  left_join(top, by = c("Installer")) %>% 
-  filter(`top installer` == "Y") %>% 
-  ggplot(aes(x = year, y = install, group = Installer, 
+inst %>%
+  mutate(year = year(CompletedDate)) %>%
+  group_by(Installer, year) %>%
+  summarise(install = n()) %>%
+  arrange(desc(install)) %>%
+  left_join(top, by = c("Installer")) %>%
+  filter(`top installer` == "Y") %>%
+  ggplot(aes(x = year, y = install, group = Installer,
              color = Installer))+
   geom_line(size = 1)+
   xlab("Year") + ylab("Number of installation") +
@@ -120,8 +97,8 @@ inst %>%
 ## Cumulative solar installation per census track
 
 ```{r}
-temp_spatial %>% 
-  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+temp_spatial %>%
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>%
   ggplot(aes(x = date, y = sum, group = geoid, color = `Over 20`))+
   geom_line(size = 1, alpha = 0.4)+
   scale_color_manual(name ="Above 20 installation", values = c("red", "black"))+
@@ -136,9 +113,9 @@ temp_spatial %>%
 ## Residential household in Seattle
 
 ```{r, dev="svg", fig.height=4}
-ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) + 
+ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) +
   facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5)) + 
+  geom_point(alpha = 0.3, position = position_jitter(width = 0.5)) +
   theme_bw() + ylab("Household proportion") +
   theme(legend.position = c(0.8, 0.3),
                      legend.background = element_rect(color = 1))
@@ -148,9 +125,9 @@ ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income c
 ## Residential solar potential (MWh) in Seattle
 
 ```{r, dev="svg", fig.height=4}
-ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
+ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) +
   facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
+  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) +
   theme_bw() + theme(legend.position = c(0.7, 0.3),
                      legend.background = element_rect(color = 1))
 ```
@@ -158,15 +135,15 @@ ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Inc
 ## Residential solar potential (MWh/ household) in Seattle
 
 ```{r, dev="svg", fig.height=4}
-ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) + 
+ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) +
   facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
+  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) +
   theme_bw() + theme(legend.position = c(0.2, 0.3),
                      legend.background = element_rect(color = 1))
 ```
 
 
-## Histograms of multiple variables 
+## Histograms of multiple variables
 
 ```{r, fig.height=5}
 fhist <- regr[, c(-1, -11)]
@@ -182,14 +159,14 @@ for(i in 1:length(fhist)){
 ## Boxplot for overall potential solar
 
 ```{r}
-seattle %>% 
-  gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>% 
-  select(geoid, class, mwh) %>% 
-  mutate(class = parse_factor(class, levels = names(seattle))) %>% 
+seattle %>%
+  gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>%
+  select(geoid, class, mwh) %>%
+  mutate(class = parse_factor(class, levels = names(seattle))) %>%
   mutate(cl = ifelse(str_detect(class, "verylow|low|mod"), "low",
-                                 ifelse(str_detect(class, "mid"), "mid", 
+                                 ifelse(str_detect(class, "mid"), "mid",
                                         ifelse(str_detect(class, "high"), "high", NA)))) %>%
-  mutate(cl = parse_factor(cl, levels = c("low", "mid", "high"))) %>% 
+  mutate(cl = parse_factor(cl, levels = c("low", "mid", "high"))) %>%
   ggplot(aes(x = class, y = mwh, color = class)) +
   geom_boxplot() +
   facet_wrap( ~ cl) +
@@ -204,7 +181,7 @@ seattle %>%
 
 ```{r}
 ### cor plot
-regr_p <- regr %>% 
+regr_p <- regr %>%
   select(-geoid, -lihtc)
 
 corrplot(cor(regr_p), method = "ellipse")
@@ -221,7 +198,7 @@ summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
            data = regr[-c(1)]))
 ```
 
-## Residual from the OLS 
+## Residual from the OLS
 <center>
 
 ![OLS residual mapping](./Figs/OLS-resid.png){width=450px}
@@ -235,7 +212,7 @@ summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
 
 </center>
 
-## Geographically weighted impact 
+## Geographically weighted impact
 <center>
 
 ![Impact of housing median value](./Figs/coef1.png){width=450px}
@@ -261,10 +238,10 @@ summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
 </center>
 
 
-## Factor analysis (Parallel screen) 
+## Factor analysis (Parallel screen)
 
 ```{r}
-fct <- regr%>% 
+fct <- regr%>%
   select(-geoid, -sol_instl, -lihtc)
 
 fa.parallel(fct,fa="fa",n.iter=50)
@@ -292,7 +269,7 @@ dim(dat)
 plot(dat[,1], regr[[14]], xlab = "The 1st factor", ylab = "Solar installation")
 ```
 
-## Factor regression 
+## Factor regression
 ```{r}
 summary(lm(regr[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
 ```
@@ -317,7 +294,7 @@ for (i in 2:9) wss[i] <- sum(kmeans(dat,centers=i)$withinss)
 plot(1:9, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
 ```
 
-## Optimal cluster 
+## Optimal cluster
 
 ```{r}
 
@@ -352,20 +329,20 @@ plot3d(fa$scores, col = kme$cluster)
 ```{r}
 dat <- as.data.frame(dat)
 dat$cluster=as.factor(kme$cluster)
-ggpairs(dat, mapping=aes(color=cluster))+ 
+ggpairs(dat, mapping=aes(color=cluster))+
   theme_bw()
 ```
 
 ## Cluster plot with smooth
 
 ```{r}
-ggpairs(dat, columns = 1:3, 
-        aes(color=cluster, alpha=0.4), 
+ggpairs(dat, columns = 1:3,
+        aes(color=cluster, alpha=0.4),
         title="Scatterplot Matrix",
         upper=list(continuous="density", combo="box"),
         lower=list(continuous="smooth", combo="dot")) +
   theme_light() +
-  theme(plot.title=element_text(size=10))+ 
+  theme(plot.title=element_text(size=10))+
   theme_bw()
 ```
 
@@ -375,10 +352,10 @@ ggpairs(dat, columns = 1:3,
 c_reg <- regr
 c_reg$cluster <- as.factor(kme$cluster)
 
-c_reg %>% 
+c_reg %>%
   ggplot(aes(x = cluster, y = sol_instl, color = cluster)) +
   geom_boxplot() +
-  ggtitle("Solar installation pattern per cluster")+ 
+  ggtitle("Solar installation pattern per cluster")+
   theme_bw()
 
 ```
@@ -387,19 +364,19 @@ c_reg %>%
 ## Data analysis 2
 ```{r}
 
-c_reg %>% 
+c_reg %>%
   ggplot(aes(x = hu_ex_1000, y = sol_instl, color = cluster, size = lihtc)) +
   geom_point() +
-  ggtitle("Solar installation pattern per cluster")+ 
+  ggtitle("Solar installation pattern per cluster")+
   theme_bw()
 ```
 
 ## Data analysis 3
 ```{r}
-c_reg %>% 
+c_reg %>%
 ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
   geom_point(alpha = 0.4)+
-  geom_smooth(span = 0.9)+ 
+  geom_smooth(span = 0.9)+
   theme_bw()
 ```
 
