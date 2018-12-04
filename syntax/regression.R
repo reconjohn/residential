@@ -135,7 +135,6 @@ ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
 library(rgl)
 plot3d(fa$scores, col = kmeans$cluster)
 
-## It shows "green" is in the less benefit situation. "Red" is medium wealthy while lower inequility. "Blue" is the most wealthy and higher inequilty. 
 
 dat <- as.data.frame(dat)
 dat$cluster=as.factor(kme$cluster)
