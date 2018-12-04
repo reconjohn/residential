@@ -117,15 +117,6 @@ regr <- seattle_simple %>%
   inner_join(hu_mwh, by = "geoid") %>% 
   select(-incomeclass, -type, -own, -hh, -mwh)
 
-## Plot
-fhist <- regr[, c(-1, -11)]
-par(mfrow=c(3,4))
-for(i in 1:length(fhist)){
-  hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
-       xlab= names(fhist)[i], col="gold")
-  abline(v = median(fhist[[i]]), col="red", lwd=4)
-  text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
-}
 
 ## for testing 
 m <- regr[, -11]

@@ -16,6 +16,7 @@ library(corrplot)
 library(tibble)
 # library(MASS)
 library(GGally)
+library(faraway)
 
 ## MASS and dplyr clash each other for select()
 
@@ -23,15 +24,15 @@ load("./data/derived/prj1.Rdata")
 load("./data/derived/prj3.Rdata")
 
 ### cor plot
-regr_p <- regr %>% 
+regrs_p <- regrs %>% 
   select(-geoid, -lihtc)
 
-View(regr_p)
-str(regr_p)
-corrplot(cor(regr_p), method = "ellipse")
+View(regrs_p)
+str(regrs_p)
+corrplot(cor(regrs_p), method = "ellipse")
 
 ### parallel plot
-fct <- regr%>% 
+fct <- regrs%>% 
   select(-geoid, -sol_instl, -lihtc)
 
 fa.parallel(fct,fa="fa",n.iter=50)
@@ -45,11 +46,61 @@ fa.diagram(fa,simple=T)
 
 dat <- fa$scores
 dim(dat)
-plot(dat[,1], regr[[14]], xlab = "The 1st factor", ylab = "Solar installation")
-summary(lm(regr[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
+plot(dat[,1], regrs[[14]], xlab = "The 1st factor", ylab = "Solar installation")
+abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
+summary(lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
 
-reg <- lm(regr[[14]] ~ dat[,1] + dat[,2] + dat[,3])
+reg <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3])
 # stepAIC(reg)
+
+## Leverage plot, Residual plot, and Half normal plot of square-root of Cook's D
+par(mfrow=c(1,3))
+plot(hatvalues(reg), ylab="leverage",main="Leverage plot", ylim=c(0,.05))
+p=3;n=length(regrs[[14]]);
+abline(h=2*((p+1)/n),lwd=0.5,col=2)
+
+sigma = summary(reg)$sigma
+min_rstudent = min(rstudent(reg))
+max_rstudent = max(rstudent(reg))
+plot(rstudent(reg), ylim = c(min(-5, min_rstudent), max(5, max_rstudent)),
+     ylab="rstudent",main="rstudent residual plot")
+abline(h=c(-3, 3),lwd=0.5,col=2)
+
+halfnorm(sqrt(cooks.distance(reg)), xlim=c(0,5), nlab = 4,
+         ylab=("square root Cook's D"), main="Half normal plots of square-root of Cook's D")
+
+## normality plot
+par(mfrow=c(1,2))
+qqnorm(rstudent(reg), datax = TRUE,
+       xlab = "normal quantile",
+       ylab = "rstudent", 
+       main = "normal probability plot for rstudent")
+qqline(rstudent(reg), datax=TRUE, col = 2)
+d <- density(rstudent(reg), adjust = 1, na.rm = TRUE)
+plot(d, type = "n", xlim=c(-5,5), main="KDE for rstudent residuals and N(0,1) density") 
+polygon(d, col = "wheat")
+z = seq(from=-5,to=5,by=.01)
+lines(z,dnorm(z), lty=2,lwd=3,col="red")
+
+## variance plot 
+par(mfrow=c(1,1))
+plot(fitted(reg), abs(rstudent(reg)),
+     xlab = "fitted values", ylab = "abs(rstudent)",
+     main = "Absolute residual plot with a smoother")
+smoother = loess(abs(rstudent(reg)) ~ fitted(reg))
+ord = order(fitted(reg)) # why do we need this line? 
+lines(fitted(reg)[ord], fitted(smoother)[ord], col="red", lwd=2)
+
+par(mfrow=c(1,3))
+preds = list(dat[,1], dat[,2], dat[,3])
+for (p in 1:3) {
+  X = preds[[p]]
+  plot(X, rstudent(reg),
+       ylab = "rstudent")
+  smoother = loess(rstudent(reg) ~ X); ord = order(X)
+  lines(X[ord], fitted(smoother)[ord], col="red", lwd=2)
+}
+
 
 ## cluster 
 set.seed(5099)
@@ -100,16 +151,16 @@ ggpairs(dat, columns = 1:3,
   theme(plot.title=element_text(size=10))+ 
   theme_bw()
 
-c_reg <- regr
+c_reg <- regrs
 c_reg$cluster <- as.factor(kme$cluster)
 View(c_reg)
 
-## regression 
-reg <- lm(sol_instl ~ .,regr[-c(1)])
+## regrsession 
+reg <- lm(sol_instl ~ .,regrs[-c(1)])
 # stepAIC(reg)
 
 summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
-           data = regr[-c(1)]))
+           data = regrs[-c(1)]))
 
 ## data analysis
 c_reg %>% 

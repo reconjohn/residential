@@ -17,8 +17,8 @@ elec <- data %>%
          str_detect(Description, "Solar|solar|SOLAR"),
          !is.na(CompletedDate)) %>% 
   mutate(PermitClass = parse_factor(PermitClass, levels = NULL)) %>% 
-  mutate(Class = recode(PermitClass, `Single Family/Duplex` = "single family",
-                        Multifamiliy = "multifamily")) %>% 
+  mutate(Class = recode(PermitClass, `Single Family/Duplex` = "Single family",
+                        Multifamiliy = "Multifamily")) %>% 
   select(Class,Description,CompletedDate,
          ContractorCompanyName,Latitude,Longitude) 
 
@@ -71,3 +71,5 @@ install <- elec %>%
   select(-ContractorCompanyName, -Description)
 
 save(inst, install, top, file = "./data/derived/prj2.Rdata")
+
+load("./data/derived/prj2.Rdata")
