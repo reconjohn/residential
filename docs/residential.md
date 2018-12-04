@@ -9,11 +9,6 @@ output:
     toc: yes
     toc_float: yes
     number_sections: true
-  word_document:
-    toc: yes
-  pdf_document:
-    latex_engine: xelatex
-    toc: yes
 ---
 
 
@@ -59,7 +54,7 @@ output:
 
 ## Cor plot
 
-> The number of solar installation per census track is the dependant variable (sol_instl). Rest of variables are as follows. 
+> The number of solar installation per census track is the dependent variable (sol_instl). Rest of variables are as follows. 
 
 > * hu_own: a proportion of owner-occupied housing unit
 > * hu_blt1970: a proportion of housing units bulit before 1970
@@ -74,7 +69,7 @@ output:
 > * hh_high_sf_own: a proportion of households of high income, single family housing owner
 > * hu_mwh: solar elergy potential (MWh) per housing unit in a census track 
 
-> The dependant variable (sol_instl) is correlated to all the variables except for the household GINI index and LITHC qualification. 
+> The dependent variable (sol_instl) is correlated to all the variables except for the household GINI index and LITHC qualification. 
 
 <img src="residential_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
@@ -108,7 +103,7 @@ output:
 
 ## Residual from the OLS
 
-> The residual plot shows it is biased and clustered indicating the model is not catching well the variability of the dependant variable. 
+> The residual plot shows it is biased and clustered indicating the model is not catching well the variability of the dependent variable. 
 
 <center>
 
@@ -308,7 +303,7 @@ output:
 
 <img src="residential_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" />
 
-## Residental solar installation trend in Seattle 
+## residential solar installation trend in Seattle 
 
 > Two different cumulative installation pattern and annual new installation pattern are mapped in each census track in Seattle. It shows cumulative number of installation is different from the annual new installation in that every year had different installation trend depending on census tracks. In addition, hotspot outlier analysis was performed for the annual new installation map. 
 
@@ -325,7 +320,7 @@ output:
 
 <center>
 
-![Hotspot for spatial-temporal cumulatative installation in Seattle](./Figs/temporal-hotspot1.png){width=650px}
+![Hotspot for spatial-temporal cumulative installation in Seattle](./Figs/temporal-hotspot1.png){width=650px}
 
 </center>
 
