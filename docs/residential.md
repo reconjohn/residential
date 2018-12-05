@@ -344,6 +344,6 @@ output:
 
 > Temporal pattern was also captured such that three noticeable areas were identified
 
-> * **Ballad** – used to a hotspot area, currently goes slow in solar installation
+> * **Ballad** – used to be a hotspot area, then went slow, currently seems increasing in solar installation
 > * **West Seattle** – a new emerging area in solar installation
-> * **Columbia city** – has been and still the hotspot
+> * **Columbia city** – has been and currently goes slow. The toal amount installation is still the highest in Seattle. 
