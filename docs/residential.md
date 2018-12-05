@@ -1,7 +1,7 @@
 ---
 title: "Characteristics of Residential Solar in Seattle"
 author: "Yohan Min"
-date: "Dec 4, 2018"
+date: "Dec 5, 2018"
 output:
   html_document:
     keep_md: yes
@@ -53,19 +53,19 @@ output:
 
 ## Cor plot
 
-> The number of solar installation per census track is the dependent variable (`sol_instl`). Rest of variables are as follows.
+> The proportion of solar installation per housing unit is the dependent variable (`sol_instl`) per census track. Rest of variables are as follows.
 
-> * `hu_own`: a proportion of owner-occupied housing unit
+> * `hu_own`: a proportion of owner-occupied housing units
 > * `hu_blt1970`: a proportion of housing units built before 1970
-> * `hu_no_mor`: a proportion of housing units without mortgage
-> * `hu_med_val`: housing unit median value
-> * `hu_ex_1000`: total number of owner-occupied units with housing costs greater than $1000/month
+> * `hu_no_mor`: a proportion of housing units without a mortgage
+> * `hu_med_val`: median value of owner-occupied housing units 
+> * `hu_ex_1000`: a proportion of owner-occupied units with housing costs greater than $1000/month
 > * `edu`: a proportion of over 25 year old population with college degree and above
 > * `wh_race`: a proportion of Caucasian population
 > * `hh_med_income`: household median income
 > * `hh_gini_index`: household GINI Index of income inequality
 > * `lihtc`: low income tax credit qualification (T/F)
-> * `hh_high_sf_own`: a proportion of households of high income, single family housing owner
+> * `hh_high_sf_own`: a proportion of households of high income, single family housing owners
 > * `hu_mwh`: solar energy potential (MWh) per housing unit in a census track
 
 > The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
@@ -122,7 +122,7 @@ output:
 
 ## Geographically weighted impact
 
-> This model tells that housing unit median value affects residential solar installation more in the area of darker red as below. These areas are more sensitive to the housing unit median value with respect to the residential solar installation.
+> This model tells that the median value of owner-occupied housing units predicts residential solar installation more in the area of darker red as below. These areas are more sensitive to the median value of owner-occupied housing units with respect to the residential solar installation.
 
 <center>
 
@@ -130,7 +130,7 @@ output:
 
 </center>
 
-> For the variable, total number of owner-occupied units with housing costs greater than $1000/month, the more sensitive area is presented as darker red in the map below.
+> For the variable, total number of owner-occupied units with housing costs greater than $1000/month, the more sensitive areas are presented as darker red in the map below.
 
 <center>
 
@@ -140,7 +140,7 @@ output:
 
 ## Hotspot analysis of residential solar installation
 
-> Each point represents the house unit with residential solar system installed on its building since 2003. By aggregating these points to the census track, hotspot areas and outliers were identified as below.
+> Each point represents the house unit with residential solar system installed on its building since 2003. By aggregating these points to the census track they are located in, hotspot areas and outliers were identified as below.
 
 <center>
 
@@ -157,7 +157,7 @@ output:
 
 ## Factor analysis (Parallel screen)
 
-> It would be useful to include all the variables rather than selecting only two variables in the model. With a factor analysis, all the variables would be used for model identification. The parallel screen confirms 2 or 3 factors would be appropriate.
+> It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 2 or 3 factors would be appropriate.
 
 <img src="residential_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
@@ -173,7 +173,7 @@ output:
 
 ## Factor analysis (Diagram)
 
-> The first factor (`ML1`) is more related to the higher housing stability, the 2nd factor (`ML2`) to the higher economic status, and the 3rd factor (`ML3`) is more related to the higher income inequality.
+> The first factor (`ML1`) is more related to the higher housing stability (homeownership), the 2nd factor (`ML2`) to the higher economic status, and the 3rd factor (`ML3`) is more related to the higher income inequality.
 
 <img src="residential_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
@@ -256,7 +256,7 @@ output:
 
 ## 3 clusters in Seattle
 
-> 3 clusters were identified with the census track in Seattle.
+> Each census track in Seattle was identified with the 3 clusters.
 
 <center>
 
@@ -277,20 +277,20 @@ output:
 
 ## Residential solar installation pattern in terms of clustering groups
 
-> Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering.
+> Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering, which confirms the factor, `ML1` has a predictive power for the residential solar installation. 
 
 <img src="residential_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
 
 
 ## Residential solar installation in Low Income Tax Credit
 
-> It indicates that lower solar installation rate and lower total number of owner-occupied units with housing costs greater than $1000/month match the certified LIHTC census tracks (TRUE).
+> It indicates that lower solar installation proprotion and lower proportion of owner-occupied units with housing costs greater than $1000/month match the pattern of the certified LIHTC census tracks (TRUE).
 
 <img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 ## Residential solar installation in housing unit median value
 
-> Higher solar installation is correlated with higher housing unit median value. Cluster #3, #1 and #2 are in order of higher solar installation.
+> Higher solar installation is correlated with higher housing unit median value. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
 
 
 <img src="residential_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
@@ -304,7 +304,7 @@ output:
 
 ## Residential solar installation trend in Seattle
 
-> Two different cumulative installation pattern and annual new installation pattern are mapped in each census track in Seattle. It shows cumulative number of installation is different from the annual new installation in that every year had different installation trend depending on census tracks. In addition, hotspot outlier analysis was performed for the annual new installation map.
+> Two different patterns of cumulative installation and annual new installation, are mapped in each census track in Seattle. It shows the pattern of cumulative number of installation is different from the annual new installation in that every year has a different installation trend depending on census tracks. In addition, hotspot outlier analysis was performed for the annual new installation map.
 
 
 <center>
@@ -315,7 +315,7 @@ output:
 
 ## Spatial-temporal hotspot analysis
 
-> The difference between cumulative number of installation hotspot and annual new installation hotspot shows the emerging area of increasing installation pattern in residential solar. It is noticeable that West Seattle recently increases the installation while Ballad used to the one but goes slow these days. Columbia city presents both of cases that it has been and still maintaining the higher rate of installation. It's found that these areas are all clustered as light red (#1) and light blue (#3).
+> The difference between cumulative number of installation hotspot and annual new installation hotspot shows the emerging area of increasing installation pattern in residential solar. It is noticeable that West Seattle recently increases the installation while Ballad used to the one, then went slow, currently increases also. Columbia city presents that it has been and currently goes slow while the toal amount installation is still the highest in Seattle. It's found that these areas are all clustered as light red (#1) and light blue (#3).
 
 <center>
 
