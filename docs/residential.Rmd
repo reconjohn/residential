@@ -32,6 +32,7 @@ library(corrplot)
 library(GGally)
 # library(MASS)
 library(faraway)
+library(sjPlot)
 ```
 
 
@@ -186,8 +187,8 @@ corrplot(cor(regr_p), method = "ellipse")
 reg <- lm(sol_instl ~ .,regrs[-c(1)])
 # stepAIC(reg)
 
-summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
-           data = regrs[-c(1)]))
+lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,data = regrs[-c(1)]) %>% 
+  tab_model()
 ```
 
 ## Residual from the OLS
@@ -290,7 +291,8 @@ abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
 > The value of R-squared of the factor regression is the same as the previous OLS **(0.61)**.
 
 ```{r}
-summary(lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
+reg <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3])
+tab_model(reg)
 ```
 
 

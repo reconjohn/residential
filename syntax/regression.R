@@ -1,11 +1,13 @@
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+library(tidyverse) # includes all the packages below 
+# library(readr)
+# library(dplyr)
+# library(tidyr)
+# library(ggplot2)
+# library(tibble)
+# library(forcats)
+# library(stringr)
 library(lubridate)
-library(forcats)
 library(pander)
-library(stringr)
 library(psych)
 library (cluster)
 library(reshape)
@@ -13,10 +15,10 @@ library(reshape2)
 library(som)
 library(GPArotation)
 library(corrplot)
-library(tibble)
-# library(MASS)
 library(GGally)
+# library(MASS)
 library(faraway)
+library(sjPlot)
 
 ## MASS and dplyr clash each other for select()
 
@@ -48,9 +50,11 @@ dat <- fa$scores
 dim(dat)
 plot(dat[,1], regrs[[14]], xlab = "The 1st factor", ylab = "Solar installation")
 abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
-summary(lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3]))
 
 reg <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3])
+tab_model(reg)
+
+
 # stepAIC(reg)
 
 ## Leverage plot, Residual plot, and Half normal plot of square-root of Cook's D
@@ -158,8 +162,8 @@ View(c_reg)
 reg <- lm(sol_instl ~ .,regrs[-c(1)])
 # stepAIC(reg)
 
-summary(lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,
-           data = regrs[-c(1)]))
+lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regrs[-c(1)]) %>% 
+  tab_model()
 
 ## data analysis
 c_reg %>% 
