@@ -1,7 +1,7 @@
 ---
 title: "Characteristics of Residential Solar in Seattle"
 author: "Yohan Min"
-date: "Dec 5, 2018"
+date: "Dec 6, 2018"
 output:
   html_document:
     keep_md: yes
