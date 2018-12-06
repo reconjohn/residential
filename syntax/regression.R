@@ -35,7 +35,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 fct <- regrs%>% 
   select(-geoid, -sol_instl, -lihtc)
 
-fa.parallel(fct,fa="fa",n.iter=50)
+fa.parallel(fct,fa="fa",n.iter=100)
 
 
 ## FA analysis
@@ -55,6 +55,7 @@ fa_lm_re <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3]) %>%
 
 # ## Leverage plot, Residual plot, and Half normal plot of square-root of Cook's D
 # par(mfrow=c(1,3))
+# reg <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3])
 # plot(hatvalues(reg), ylab="leverage",main="Leverage plot", ylim=c(0,.05))
 # p=3;n=length(regrs[[14]]);
 # abline(h=2*((p+1)/n),lwd=0.5,col=2)
@@ -155,7 +156,7 @@ View(c_reg)
 
 ## regrsession 
 reg <- lm(sol_instl ~ .,regrs[-c(1)])
-# stepAIC(reg)
+# MASS::stepAIC(reg)
 
 va_lm_re <- lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regrs[-c(1)]) %>% 
   tab_model()
@@ -179,7 +180,7 @@ ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
   geom_smooth(span = 0.9)+ 
   theme_bw()
 
-save(regrs_p, fct, fa, dat, dat1, reg, kme, c_reg, va_lm_re, fa_lm_re, 
+save(regrs_p, fct, fa, dat, dat1, kme, va_lm_re, fa_lm_re, 
      wss, g_perf_re, g_pair_re, g_pair1_re, g_sol_re, g_ef1_re, g_ef2_re, 
      file = "./data/derived/reg.Rdata")
 

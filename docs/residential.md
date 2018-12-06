@@ -179,7 +179,7 @@ output:
 <img src="residential_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 ```
-## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA
+## Parallel analysis suggests that the number of factors =  3  and the number of components =  NA
 ```
 
 ## Factor analysis (Plot)
