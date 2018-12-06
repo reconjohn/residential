@@ -32,7 +32,7 @@ inst <- elec %>%
 levels(inst$Installer)
 
 ## plot
-inst %>% 
+g_pvtren_dv <- inst %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Class, year) %>% 
   summarise(install = n()) %>% 
@@ -51,7 +51,7 @@ top <- inst %>%
   mutate('top installer' = ifelse(n > 34, "Y", "N"))
 
 ## plot
-inst %>% 
+g_pvcontr_dv <- inst %>% 
   mutate(year = year(CompletedDate)) %>% 
   group_by(Installer, year) %>% 
   summarise(install = n()) %>% 
@@ -63,13 +63,13 @@ inst %>%
   geom_line(size = 1)+
   xlab("Year") + ylab("Number of installation") +
   theme_bw() +
-  theme(legend.position = c(0.2, 0.7),
+  theme(legend.position = c(0.3, 0.7),
         legend.background = element_rect(fill="transparent")) +
   scale_x_continuous(breaks = seq(2000, 2019, by = 1))
 
 install <- elec %>% 
   select(-ContractorCompanyName, -Description)
 
-save(inst, install, top, file = "./data/derived/prj2.Rdata")
+save(inst, install, top, g_pvcontr_dv, g_pvtren_dv, file = "./data/derived/dv.Rdata")
 
-load("./data/derived/prj2.Rdata")
+load("./data/derived/dv.Rdata")

@@ -198,11 +198,6 @@ output:
 
 > The most loaded, `ML1` is positively correlated with the solar installation variable.
 
-
-```
-## [1] 131   3
-```
-
 <img src="residential_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 ## Factor regression
@@ -262,31 +257,14 @@ output:
 
 <img src="residential_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
-
 <img src="residential_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+
 
 ## Cluster analysis
 
-
-
-```
-## 
-##  1  2  3 
-## 55 32 44
-```
-
-<img src="residential_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
-
-```
-## [1] 177.3648
-```
-
-
-## Cluster plot
-
 > Based on the 3 factors, 3 clusters are presented in colors.
 
-<img src="residential_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /><img src="residential_files/figure-html/unnamed-chunk-18-2.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
 
 ## 3D plot
 
@@ -308,38 +286,38 @@ output:
 
 > Each cluster shows unique features. Green groups comparatively have less housing stability and economic status while higher income inequality. Light blue groups are relatively opposite to the green groups. Light red groups keep their position in the middle of these 2 groups.
 
-<img src="residential_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
 
 ## Cluster plot with smooth
 
-<img src="residential_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
 
 ## Residential solar installation pattern in terms of clustering groups
 
 > Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering, which confirms the factor, `ML1` has a predictive power for the residential solar installation. 
 
-<img src="residential_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 
 ## Residential solar installation in Low Income Tax Credit
 
 > It indicates that lower solar installation proprotion and lower proportion of owner-occupied units with housing costs greater than $1000/month match the pattern of the certified LIHTC census tracks (TRUE).
 
-<img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
 
 ## Residential solar installation in housing unit median value
 
 > Higher solar installation is correlated with higher housing unit median value. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
 
 
-<img src="residential_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 
 ## Cumulative solar installation per census track
 
 > Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle. Interestingly, one census track is noticeably high in installation over the period.
 
-<img src="residential_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" />
+<img src="residential_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
 
 ## Residential solar installation trend in Seattle
 

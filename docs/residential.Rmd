@@ -41,67 +41,37 @@ library(sjPlot)
 > Why is there a drop in residential solar installation in Seattle from 2016? The study area is Seattle and the unit of analysis is census track.
 
 ```{r load data}
-load("../data/derived/prj1.Rdata")
-load("../data/derived/prj2.Rdata")
-load("../data/derived/prj3.Rdata")
+
+load("../data/derived/iv.Rdata")
+load("../data/derived/dv.Rdata")
+load("../data/derived/ts.Rdata")
+load("../data/derived/reg.Rdata")
 ```
 
 ```{r}
 
-inst %>%
-  mutate(year = year(CompletedDate)) %>%
-  group_by(Class, year) %>%
-  summarise(install = n()) %>%
-  ggplot(aes(x = year, y = install, group = Class, color = Class))+
-  geom_line(size = 1)+
-  xlab("Year") + ylab("Number of installation") +
-  theme_bw() +
-  theme(legend.position = c(0.90, 0.25),
-        legend.background = element_rect(fill="transparent")) +
-  scale_x_continuous(breaks = seq(2000, 2019, by = 1))
+g_pvtren_dv
+
 ```
 
 ## Solar installation trend by contractors
 
 ```{r}
-inst %>%
-  mutate(year = year(CompletedDate)) %>%
-  group_by(Installer, year) %>%
-  summarise(install = n()) %>%
-  arrange(desc(install)) %>%
-  left_join(top, by = c("Installer")) %>%
-  filter(`top installer` == "Y") %>%
-  ggplot(aes(x = year, y = install, group = Installer,
-             color = Installer))+
-  geom_line(size = 1)+
-  xlab("Year") + ylab("Number of installation") +
-  theme_bw() +
-  theme(legend.position = c(0.3, 0.7),
-        legend.background = element_rect(fill="transparent")) +
-  scale_x_continuous(breaks = seq(2000, 2019, by = 1))
+g_pvcontr_dv
 ```
 
 
 ## Residential households in Seattle
 
 ```{r}
-ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) +
-  facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5)) +
-  theme_bw() + ylab("Households proportion") +
-  theme(legend.position = c(0.8, 0.3),
-                     legend.background = element_rect(color = 1))
+g_hh_iv
 ```
 
 
 ## Residential solar potential (MWh/ household) in Seattle
 
 ```{r}
-ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) +
-  facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) +
-  theme_bw() + theme(legend.position = c(0.2, 0.3),
-                     legend.background = element_rect(color = 1))
+g_mwhu_iv
 ```
 
 ## Residential solar potential (MWh) in Seattle
@@ -109,11 +79,7 @@ ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color =
 > There are two noticeable groups in social characteristics with solar potential (MWh): A group of high income, single family housing owners and a group of low income, multifamily housing renters. These two groups have comparatively higher potential for solar electricity generation.
 
 ```{r}
-ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) +
-  facet_grid(type ~ own) +
-  geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) +
-  theme_bw() + theme(legend.position = c(0.7, 0.3),
-                     legend.background = element_rect(color = 1))
+g_mwh_iv
 ```
 
 ## Boxplot for overall potential solar
@@ -141,14 +107,7 @@ seattle %>%
 > Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, `the Department of Housing and Urban Development (HUD) 2017` and `City of Seattle open data portal`.
 
 ```{r, fig.height=5}
-fhist <- regrs[, c(-1, -11)]
-par(mfrow=c(3,4))
-for(i in 1:length(fhist)){
-  hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
-       xlab= names(fhist)[i], col="gold")
-  abline(v = median(fhist[[i]]), col="red", lwd=4)
-  text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
-}
+source("../syntax/dv_table.R")
 ```
 
 ## Cor plot
@@ -172,10 +131,8 @@ for(i in 1:length(fhist)){
 
 ```{r}
 ### cor plot
-regr_p <- regrs %>%
-  select(-geoid, -lihtc)
 
-corrplot(cor(regr_p), method = "ellipse")
+corrplot(cor(regrs_p), method = "ellipse")
 ```
 
 
@@ -184,11 +141,7 @@ corrplot(cor(regr_p), method = "ellipse")
 > By exploratory regression analyses, the best model with the highest **R-squared (0.61)** and lowest **AIC (653.69)** was chosen with the two variables, `hu_med_val` and `hu_ex_1000` through OLS.
 
 ```{r}
-reg <- lm(sol_instl ~ .,regrs[-c(1)])
-# stepAIC(reg)
-
-lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,data = regrs[-c(1)]) %>% 
-  tab_model()
+va_lm_re
 ```
 
 ## Residual from the OLS
@@ -251,8 +204,6 @@ lm(formula = sol_instl ~ hu_med_val + hu_ex_1000,data = regrs[-c(1)]) %>%
 > It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 2 or 3 factors would be appropriate.
 
 ```{r}
-fct <- regrs%>%
-  select(-geoid, -sol_instl, -lihtc)
 
 fa.parallel(fct,fa="fa",n.iter=50)
 ```
@@ -262,7 +213,6 @@ fa.parallel(fct,fa="fa",n.iter=50)
 > The 3 factors partially explain each variable depending on the latent characteristics.
 
 ```{r}
-fa <- fa(fct,nfactors=3,rotate="promax",fm="ml")
 
 factor.plot(fa, labels=rownames(fa$loadings))
 ```
@@ -280,8 +230,6 @@ fa.diagram(fa,simple=T)
 > The most loaded, `ML1` is positively correlated with the solar installation variable.
 
 ```{r}
-dat <- fa$scores
-dim(dat)
 plot(dat[,1], regrs[[14]], xlab = "The 1st factor", ylab = "Solar installation")
 abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
 ```
@@ -291,8 +239,7 @@ abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
 > The value of R-squared of the factor regression is the same as the previous OLS **(0.61)**.
 
 ```{r}
-reg <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3])
-tab_model(reg)
+fa_lm_re
 ```
 
 
@@ -301,47 +248,20 @@ tab_model(reg)
 > A cluster analysis was done to further study the featured census tracks. It shows clustering three would be appropriate.
 
 ```{r}
-wss <- (nrow(dat)-1)*sum(apply(dat,2,var))
-for (i in 2:9) wss[i] <- sum(kmeans(dat,centers=i)$withinss)
 plot(1:9, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
-```
 
+```
 
 ```{r}
-
-performance=c()
-for (i in rep(1:100,times=30)) {
-  clust=kmeans(dat,i)
-  performance=c(performance,1-clust$tot.withinss/clust$totss)
-}
-perf_df=data.frame(metrics=performance,number_of_center=rep(1:100,times=30))
-ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
-  geom_point(alpha=0.2) +
-  geom_vline(xintercept = 3,color='red')
-
+g_perf_re
 ```
+
 
 ## Cluster analysis
-
-
-```{r}
-set.seed(5099)
-kme <- kmeans(dat,center=3)
-table(kme$cluster) #number of samples in each cluster
-Group1 <- kme$centers[1,]
-Group2 <- kme$centers[2,]
-plot(Group1,Group2,type="n")
-text(Group1,Group2, labels=colnames(dat))
-sum(kme$withinss)
-```
-
-
-## Cluster plot
 
 > Based on the 3 factors, 3 clusters are presented in colors.
 
 ```{r}
-pairs(dat, col=kme$cluster)
 clusplot(dat, kme$cluster, color=TRUE,shade=TRUE, labels=5, lines=0)
 ```
 
@@ -369,23 +289,13 @@ plot3d(fa$scores, col = kme$cluster)
 > Each cluster shows unique features. Green groups comparatively have less housing stability and economic status while higher income inequality. Light blue groups are relatively opposite to the green groups. Light red groups keep their position in the middle of these 2 groups.
 
 ```{r}
-dat <- as.data.frame(dat)
-dat$cluster=as.factor(kme$cluster)
-ggpairs(dat, mapping=aes(color=cluster))+
-  theme_bw()
+g_pair_re 
 ```
 
 ## Cluster plot with smooth
 
 ```{r}
-ggpairs(dat, columns = 1:3,
-        aes(color=cluster, alpha=0.4),
-        title="Scatterplot Matrix",
-        upper=list(continuous="density", combo="box"),
-        lower=list(continuous="smooth", combo="dot")) +
-  theme_light() +
-  theme(plot.title=element_text(size=10))+
-  theme_bw()
+g_pair1_re
 ```
 
 ## Residential solar installation pattern in terms of clustering groups
@@ -393,14 +303,7 @@ ggpairs(dat, columns = 1:3,
 > Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering, which confirms the factor, `ML1` has a predictive power for the residential solar installation. 
 
 ```{r}
-c_reg <- regrs
-c_reg$cluster <- as.factor(kme$cluster)
-
-c_reg %>%
-  ggplot(aes(x = cluster, y = sol_instl, color = cluster)) +
-  geom_boxplot() +
-  ggtitle("Solar installation pattern per cluster")+
-  theme_bw()
+g_sol_re
 
 ```
 
@@ -411,11 +314,7 @@ c_reg %>%
 
 ```{r}
 
-c_reg %>%
-  ggplot(aes(x = hu_ex_1000, y = sol_instl, color = cluster, size = lihtc)) +
-  geom_point() +
-  ggtitle("Solar installation pattern per cluster")+
-  theme_bw()
+g_ef1_re
 ```
 
 ## Residential solar installation in housing unit median value
@@ -424,11 +323,7 @@ c_reg %>%
 
 
 ```{r}
-c_reg %>%
-ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
-  geom_point(alpha = 0.4)+
-  geom_smooth(span = 0.9)+
-  theme_bw()
+g_ef2_re
 ```
 
 
@@ -437,16 +332,7 @@ ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
 > Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle. Interestingly, one census track is noticeably high in installation over the period.
 
 ```{r}
-temp_spatial %>%
-  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>%
-  ggplot(aes(x = date, y = sum, group = geoid, color = `Over 20`))+
-  geom_line(size = 1, alpha = 0.4)+
-  scale_color_manual(name ="Above 20 installations", values = c("red", "black"))+
-  xlab("Year") + ylab("Cumulative number of installation") +
-  theme_bw() +
-  theme(legend.position = c(0.2, 0.7),
-        legend.background = element_rect(fill="transparent")) +
-  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+g_ts_ts
 ```
 
 ## Residential solar installation trend in Seattle

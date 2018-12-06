@@ -16,14 +16,15 @@ regrs <- regr %>%
               select(geoid, sol_instl), by = "geoid")
 
 ## Plot
-fhist <- regrs[, c(-1, -11)]
-par(mfrow=c(3,4))
-for(i in 1:length(fhist)){
-  hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
-       xlab= names(fhist)[i], col="gold")
-  abline(v = median(fhist[[i]]), col="red", lwd=4)
-  text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
-}
+# fhist <- regrs[, c(-1, -11)]
+# par(mfrow=c(3,4))
+# g_tab_ts <- for(i in 1:length(fhist)){
+#   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
+#        xlab= names(fhist)[i], col="gold")
+#   abline(v = median(fhist[[i]]), col="red", lwd=4)
+#   text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
+# }
+source("./syntax/dv_table.R")
 
 ## data cleaning for time series
 spa <- instl %>% 
@@ -48,7 +49,7 @@ temp_spatial <- spa %>%
   left_join(temp, by= "geoid")
 
 ## plot! 
-temp_spatial %>% 
+g_ts_ts <- temp_spatial %>% 
   filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
   ggplot(aes(x = date, y = sum, group = geoid, color = `Over 20`))+
   geom_line(size = 1, alpha = 0.4)+
@@ -76,6 +77,6 @@ ts <- t %>%
   mutate(year = as.Date(str_c("01/01/", as.character(year)), format = "%m/%d/%Y"))
 
 write_csv(ts, path = "./data/derived/ts.csv" )
-save(regrs, instl, temp_spatial, ts, file = "./data/derived/prj3.Rdata")
+save(regrs, instl, temp_spatial, ts, g_ts_ts, file = "./data/derived/ts.Rdata")
 
-load("./data/derived/prj3.Rdata")
+load("./data/derived/ts.Rdata")

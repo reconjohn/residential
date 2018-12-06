@@ -81,21 +81,21 @@ pot <- wrk %>%
   mutate(hh_prp = shh/ hh_tot)
 
 ## ggplot 
-ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
+g_mwh_iv <- ggplot(pot, aes(x = `Income class`, y = `Total MWh`, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
   theme_bw() + theme(legend.position = c(0.7, 0.3),
                      legend.background = element_rect(color = 1))
 
 ## ggplot 
-ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) + 
+g_mwhu_iv <- ggplot(pot, aes(x = `Income class`, y = `MWh/house hold`, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5, height = 2)) + 
   theme_bw() + theme(legend.position = c(0.2, 0.3),
                      legend.background = element_rect(color = 1))
 
 ## ggplot 
-ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) + 
+g_hh_iv <- ggplot(pot, aes(x = `Income class`, y = hh_prp, group = geoid, color = `Income class`)) + 
   facet_grid(type ~ own) +
   geom_point(alpha = 0.3, position = position_jitter(width = 0.5)) + 
   theme_bw() + ylab("Household proportion") +
@@ -151,4 +151,6 @@ seattle %>%
   theme(axis.text.x = element_blank(),
       axis.ticks.x = element_blank())
 
-save(county, seattle, seattle_simple, pot, regr, file = "./data/derived/prj1.Rdata")
+save(county, seattle, seattle_simple, pot, regr, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
+
+load("./data/derived/iv.Rdata")
