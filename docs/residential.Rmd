@@ -124,12 +124,9 @@ source("../syntax/dv_table.R")
 > * `hu_med_val`: median value of owner-occupied housing units 
 > * `hu_ex_1000`: a proportion of owner-occupied units with housing costs greater than $1000/month
 > * `edu`: a proportion of over 25 year old population with college degree and above
-> * `wh_race`: a proportion of Caucasian population
 > * `hh_med_income`: household median income
 > * `hh_gini_index`: household GINI Index of income inequality
 > * `lihtc`: low income tax credit qualification (T/F)
-> * `hh_high_sf_own`: a proportion of households of high income, single family housing owners
-> * `hu_mwh`: solar energy potential (MWh) per housing unit in a census track
 
 > The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
 

@@ -1,7 +1,7 @@
 ---
 title: "Characteristics of Residential Solar in Seattle"
 author: "Yohan Min"
-date: "Dec 6, 2018"
+date: "Dec 7, 2018"
 output:
   html_document:
     keep_md: yes
@@ -65,12 +65,9 @@ output:
 > * `hu_med_val`: median value of owner-occupied housing units 
 > * `hu_ex_1000`: a proportion of owner-occupied units with housing costs greater than $1000/month
 > * `edu`: a proportion of over 25 year old population with college degree and above
-> * `wh_race`: a proportion of Caucasian population
 > * `hh_med_income`: household median income
 > * `hh_gini_index`: household GINI Index of income inequality
 > * `lihtc`: low income tax credit qualification (T/F)
-> * `hh_high_sf_own`: a proportion of households of high income, single family housing owners
-> * `hu_mwh`: solar energy potential (MWh) per housing unit in a census track
 
 > The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
 
@@ -183,7 +180,7 @@ output:
 <img src="residential_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 ```
-## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA
+## Parallel analysis suggests that the number of factors =  3  and the number of components =  NA
 ```
 
 ## Factor analysis (Plot)
@@ -227,21 +224,21 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,1]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.34</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.67&nbsp;&ndash;&nbsp;4.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.47</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.83&nbsp;&ndash;&nbsp;4.12</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,2]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.64</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.02&nbsp;&ndash;&nbsp;1.25</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.044</strong></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.30&nbsp;&ndash;&nbsp;0.97</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.306</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,3]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.39</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.23&nbsp;&ndash;&nbsp;1.01</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.217</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.26</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.33&nbsp;&ndash;&nbsp;0.84</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.392</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
@@ -249,7 +246,7 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adjusted R<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.611 / 0.601</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.612 / 0.602</td>
 </tr>
 
 </table>

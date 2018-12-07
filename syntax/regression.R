@@ -25,7 +25,7 @@ load("./data/derived/ts.Rdata")
 
 ### cor plot
 regrs_p <- regrs %>% 
-  select(-geoid, -lihtc)
+  select(-geoid, -lihtc, -hu_mwh, -wh_race, -hh_high_sf_own)
 
 # View(regrs_p)
 # str(regrs_p)
@@ -33,7 +33,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ### parallel plot
 fct <- regrs%>% 
-  select(-geoid, -sol_instl, -lihtc)
+  select(-geoid, -sol_instl, -lihtc, -hu_mwh, -wh_race, -hh_high_sf_own)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
