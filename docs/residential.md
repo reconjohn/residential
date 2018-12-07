@@ -8,7 +8,6 @@ output:
     preserve_yaml: yes
     toc: yes
     toc_float: yes
-    self_contained: yes
   pdf_document:
     toc: yes
   word_document:
@@ -312,7 +311,7 @@ output:
 
 ## Residential solar installation in housing unit median value
 
-> Higher solar installation is correlated with higher housing unit median value. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
+> Higher solar installation is correlated with higher median value of owner-occupied housing units. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
 
 
 <img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
@@ -355,12 +354,12 @@ output:
 
 > Residential solar installation follows patterns of
 
-> * Housing median value
+> * Median value of owner-occupied housing units
 > * The number of owner-occupied house with higher housing cost
 
 > Cluster and factor analysis captures solar installation pattern (Cluster #1 and #3) in terms of
 
-> * **Higher housing stability**
+> * **Higher housing stability (homeownership)**
 > * **Higher economic status**
 > * **Lower income inequality**
 
@@ -368,4 +367,4 @@ output:
 
 > * **Ballard** – used to be a hotspot area, then went slow, currently seems increasing in solar installation
 > * **West Seattle** – a new emerging area in solar installation
-> * **Columbia city** – has been and currently goes slow. The toal amount installation is still the highest in Seattle. 
+> * **Columbia city** – has been a hotspot but currently goes slow. The toal amount installation is still the highest in Seattle. 
