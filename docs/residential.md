@@ -8,6 +8,11 @@ output:
     preserve_yaml: yes
     toc: yes
     toc_float: yes
+    self_contained: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 
@@ -332,7 +337,7 @@ output:
 
 ## Spatial-temporal hotspot analysis
 
-> The difference between cumulative number of installation hotspot and annual new installation hotspot shows the emerging area of increasing installation pattern in residential solar. It is noticeable that West Seattle recently increases the installation while Ballad used to the one, then went slow, currently increases also. Columbia city presents that it has been and currently goes slow while the toal amount installation is still the highest in Seattle. It's found that these areas are all clustered as light red (#1) and light blue (#3).
+> The difference between cumulative number of installation hotspot and annual new installation hotspot shows the emerging area of increasing installation pattern in residential solar. It is noticeable that West Seattle recently increases the installation while Ballard used to the one, then went slow, currently increases also. Columbia city presents that it has been and currently goes slow while the toal amount installation is still the highest in Seattle. It's found that these areas are all clustered as light red (#1) and light blue (#3).
 
 <center>
 
@@ -361,6 +366,6 @@ output:
 
 > Temporal pattern was also captured such that three noticeable areas were identified
 
-> * **Ballad** – used to be a hotspot area, then went slow, currently seems increasing in solar installation
+> * **Ballard** – used to be a hotspot area, then went slow, currently seems increasing in solar installation
 > * **West Seattle** – a new emerging area in solar installation
 > * **Columbia city** – has been and currently goes slow. The toal amount installation is still the highest in Seattle. 
