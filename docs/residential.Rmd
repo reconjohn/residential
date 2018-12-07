@@ -323,7 +323,7 @@ g_ef1_re
 
 ## Residential solar installation in housing unit median value
 
-> Higher solar installation is correlated with higher median value of owner-occupied housing units. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
+> Solar installation is correlated with the median value of owner-occupied housing units in general. But if separated by clusers, it shows lower correlations for each cluster. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
 
 
 ```{r}

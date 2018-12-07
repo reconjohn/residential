@@ -183,7 +183,7 @@ output:
 <img src="residential_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 ```
-## Parallel analysis suggests that the number of factors =  3  and the number of components =  NA
+## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA
 ```
 
 ## Factor analysis (Plot)
@@ -311,7 +311,7 @@ output:
 
 ## Residential solar installation in housing unit median value
 
-> Higher solar installation is correlated with higher median value of owner-occupied housing units. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
+> Solar installation is correlated with the median value of owner-occupied housing units in general. But if separated by clusers, it shows lower correlations for each cluster. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
 
 
 <img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
