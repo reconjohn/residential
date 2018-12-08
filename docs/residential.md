@@ -351,14 +351,14 @@ output:
 
 > Residential solar installation follows patterns of
 
-> * Median value of owner-occupied housing units
-> * The number of owner-occupied house with higher housing cost
+> * The proportion of owner-occupied units with higher housing cost
+> * Median value of owner-occupied units
 
-> Cluster and factor analysis captures solar installation pattern (Cluster #1 and #3) in terms of
+> Cluster and factor analyses catch solar installation pattern (cluster #1 and #3) in terms of
 
-> * **Higher housing stability (homeownership)**
-> * **Higher economic status**
-> * **Lower income inequality**
+> * **Higher housing stability (homeownership)** - strongly correlated (0.778)
+> * **Higher economic status** - moderately correlated (0.534)
+> * **Lower income inequality** - less liekly correlated (-0.255)
 
 > Temporal pattern was also captured such that three noticeable areas were identified
 

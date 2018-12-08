@@ -137,12 +137,13 @@ library(rgl)
 plot3d(fa$scores, col = kmeans$cluster)
 
 dat1 <- dat
-dat1$cluster=as.factor(kme$cluster)
-g_pair_re <- ggpairs(dat1, mapping=aes(color=cluster))+ 
+dat1$Sol <- regrs[["sol_instl"]]
+dat1$Cluster=as.factor(kme$cluster)
+g_pair_re <- ggpairs(dat1, mapping=aes(color=Cluster))+ 
   theme_bw()
 
-g_pair1_re <- ggpairs(dat1, columns = 1:3, 
-        aes(color=cluster, alpha=0.4), 
+g_pair1_re <- ggpairs(dat1, columns = 1:4, 
+        aes(color=Cluster, alpha=0.4), 
         title="Scatterplot Matrix",
         upper=list(continuous="density", combo="box"),
         lower=list(continuous="smooth", combo="dot")) +
