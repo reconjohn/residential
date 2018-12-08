@@ -116,16 +116,16 @@ source("../syntax/dv_table.R")
 
 ## Cor plot
 
-> The proportion of solar installation per housing unit is the dependent variable (`sol_instl`) per census track. Rest of variables are as follows.
+> The number of solar installation per 1,000 housing units is the dependent variable (`sol_instl`) per census track. Rest of variables are as follows.
 
-> * `hu_own`: a proportion of owner-occupied housing units
-> * `hu_blt1970`: a proportion of housing units built before 1970
-> * `hu_no_mor`: a proportion of housing units without a mortgage
-> * `hu_med_val`: median value of owner-occupied housing units 
-> * `hu_ex_1000`: a proportion of owner-occupied units with housing costs greater than $1000/month
-> * `edu`: a proportion of over 25 year old population with college degree and above
-> * `hh_med_income`: household median income
+> * `hu_own`: proportion of owner-occupied housing units
+> * `hu_no_mor`: proportion of owner-occupied housing units without a mortgage
+> * `hu_med_val`: normalized median value of owner-occupied housing units 
+> * `hu_ex_1000`: proportion of owner-occupied units with housing costs greater than $1000/month
+> * `edu`: proportion of over 25 year old population with college degree and above
+> * `hh_med_income`: normalized household median income
 > * `hh_gini_index`: household GINI Index of income inequality
+> * `hu_high_sf_own`: proportion of households of high income, single family and owning the house
 > * `lihtc`: low income tax credit qualification (T/F)
 
 > The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
@@ -367,10 +367,10 @@ g_ts_ts
 
 > Residential solar installation follows patterns of
 
-> * Median value of owner-occupied housing units
-> * The number of owner-occupied house with higher housing cost
+> * The proportion of owner-occupied units with higher housing cost
+> * Median value of owner-occupied units
 
-> Cluster and factor analysis captures solar installation pattern (Cluster #1 and #3) in terms of
+> Cluster and factor analyses catch solar installation pattern (cluster #1 and #3) in terms of
 
 > * **Higher housing stability (homeownership)**
 > * **Higher economic status**

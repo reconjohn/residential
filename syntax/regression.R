@@ -25,7 +25,7 @@ load("./data/derived/ts.Rdata")
 
 ### cor plot
 regrs_p <- regrs %>% 
-  select(-geoid, -lihtc, -hu_mwh, -wh_race, -hh_high_sf_own)
+  select(-geoid, -lihtc, -hu_blt1979, -non_us, -hu_mwh, -af_race, -wh_race)
 
 # View(regrs_p)
 # str(regrs_p)
@@ -33,7 +33,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ### parallel plot
 fct <- regrs%>% 
-  select(-geoid, -sol_instl, -lihtc, -hu_mwh, -wh_race, -hh_high_sf_own)
+  select(-geoid, -sol_instl, -lihtc, -hu_blt1979, -non_us, -hu_mwh, -af_race, -wh_race)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
@@ -46,10 +46,10 @@ fa.diagram(fa,simple=T)
 
 dat <- as.data.frame(fa$scores)
 # dim(dat)
-plot(dat[,1], regrs[[14]], xlab = "The 1st factor", ylab = "Solar installation")
-abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
+plot(dat[,1], regrs[["sol_instl"]], xlab = "The 1st factor", ylab = "Solar installation")
+abline(lm(regrs[["sol_instl"]] ~ dat[,1]), col = "red")
 
-fa_lm_re <- lm(regrs[[14]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
+fa_lm_re <- lm(regrs[["sol_instl"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
   tab_model()
 
 
@@ -155,8 +155,9 @@ c_reg$cluster <- as.factor(kme$cluster)
 View(c_reg)
 
 ## regrsession 
-reg <- lm(sol_instl ~ .,regrs[-c(1)])
+# reg <- lm(sol_instl ~ .,regrs[-c(1,3,9,10,15)])
 # MASS::stepAIC(reg)
+# summary(lm(formula = sol_instl ~ hu_ex_1000  + hu_med_val, data = regrs[-c(1, 3, 9, 10, 15)]))
 
 va_lm_re <- lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regrs[-c(1)]) %>% 
   tab_model()

@@ -16,10 +16,13 @@ View(data)
 county <- data %>% 
   filter(county_name =="King County") %>% 
   select(geoid,ends_with("hh"),ends_with("mwh"),hh_med_income,
-         hh_gini_index,pop_total,pop_caucasian,pop25_some_college_plus,
-         hu_own,hu_rent,hu_monthly_owner_costs_greaterthan_1000dlrs,hu_med_val, hu_no_mortgage,
-         hu_vintage_1960to1970, hu_vintage_1940to1959, hu_vintage_1939toearlier,lihtc_qualified,-pct_eli_hh,
-         -ends_with("elep_hh"))
+         hh_gini_index,pop_total,pop_non_us_citizen,pop_african_american,pop_caucasian,
+         pop25_some_college_plus,
+         hu_own,hu_rent,hu_monthly_owner_costs_greaterthan_1000dlrs,
+         hu_monthly_owner_costs_lessthan_1000dlrs,hu_med_val, hu_no_mortgage,
+         hu_vintage_2010toafter, hu_vintage_2000to2009, hu_vintage_1980to1999,
+         hu_vintage_1960to1970, hu_vintage_1940to1959, hu_vintage_1939toearlier,lihtc_qualified,
+         -pct_eli_hh,-ends_with("elep_hh"))
 str(county)
 county$hh_med_income[is.na(county$hh_med_income)] = 7115
 
@@ -32,11 +35,17 @@ seattle_simple <- seattle %>%
   gather(char,val, very_low_mf_own_hh:high_sf_rent_mwh) %>% 
   mutate(hu = hu_rent + hu_own,
          hu_own = hu_own/ hu,
-         hu_blt1970 = (hu_vintage_1960to1970+hu_vintage_1940to1959+hu_vintage_1939toearlier)/ hu,
+         hu_blt1979 = (hu_vintage_1960to1970+hu_vintage_1940to1959+hu_vintage_1939toearlier)/ 
+           (hu_vintage_2010toafter+ hu_vintage_2000to2009+ hu_vintage_1980to1999+
+            hu_vintage_1960to1970+ hu_vintage_1940to1959+ hu_vintage_1939toearlier),
          hu_no_mor = hu_no_mortgage/ hu,
+         hu_med_val = hu_med_val/max(hu_med_val),
          hu_ex_1000 = hu_monthly_owner_costs_greaterthan_1000dlrs/ hu,
          edu = pop25_some_college_plus/ pop_total,
          wh_race = pop_caucasian/ pop_total,
+         af_race = pop_african_american/ pop_total,
+         non_us = pop_non_us_citizen/ pop_total,
+         hh_med_income = hh_med_income/ max(hh_med_income),
          lihtc = factor(lihtc_qualified), 
          incomeclass = case_when(
            substr(char, 1,4) == "very" ~ "verylow",
@@ -49,9 +58,11 @@ seattle_simple <- seattle %>%
          sep = ifelse(str_detect(char, "hh"), "hh", "mwh")) %>% 
   spread(sep, val) %>% 
   select(geoid, incomeclass, type, own, hh, mwh, 
-         hu_own, hu_blt1970, hu_no_mor,hu_med_val, hu_ex_1000, 
-         edu, wh_race, hh_med_income, hh_gini_index,lihtc) %>% 
+         hu_own, hu_blt1979, hu_no_mor,hu_med_val, hu_ex_1000, 
+         edu, wh_race, af_race, non_us, hh_med_income, hh_gini_index,lihtc) %>% 
   mutate_at(vars(type,own), funs(factor)) 
+
+seattle_simple$hu_ex_1000[seattle_simple$geoid == 53033000500] = 1
 
 seattle_simple <- seattle_simple %>% 
   filter(!is.na(hh)) %>% 
@@ -59,6 +70,7 @@ seattle_simple <- seattle_simple %>%
   inner_join(seattle_simple %>% 
                filter(!is.na(mwh)) %>% 
                select(-hh), by = c("geoid", "incomeclass", "type", "own"))
+
   
 View(seattle_simple)
 str(seattle_simple)
@@ -117,40 +129,58 @@ regr <- seattle_simple %>%
   inner_join(hu_mwh, by = "geoid") %>% 
   select(-incomeclass, -type, -own, -hh, -mwh)
 
+po <- read_csv(file = "./data/derived/potential.csv")
+regrs <- regr %>% 
+  left_join(po %>% 
+              select(geoid, sol_instl), by = "geoid")
 
-## for testing 
-m <- regr[, -11]
-m %>% 
-  gather(class, value, hu_own:hu_mwh) %>% 
-  ggplot(aes(x = value)) +
-  geom_histogram(aes(y = ..density..), binwidth = 0.02) +
-  facet_wrap( ~ class) +
-  scale_x_log10()
+## Plot
+# fhist <- regrs[, c(-1, -11)]
+# par(mfrow=c(3,4))
+# g_tab_ts <- for(i in 1:length(fhist)){
+#   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
+#        xlab= names(fhist)[i], col="gold")
+#   abline(v = median(fhist[[i]]), col="red", lwd=4)
+#   text(median(fhist[[i]]), 0, round(median(fhist[[i]]),2), col = "blue")
+# }
 
-seattle %>% 
-  gather(class, hh, very_low_mf_own_hh:high_sf_rent_hh) %>% 
-  select(geoid, class, hh) %>% 
-  ggplot(aes(x = hh)) +
-  geom_histogram(binwidth = 50) +
-  facet_wrap( ~ class, nrow = 5) +
-  theme_minimal() + xlim(-100,1500)
+# source("./syntax/dv_table.R")
 
-seattle %>% 
-  gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>% 
-  select(geoid, class, mwh) %>% 
-  mutate(class = parse_factor(class, levels = names(seattle))) %>% 
-  mutate(cl = ifelse(str_detect(class, "verylow|low|mod"), "low",
-                                 ifelse(str_detect(class, "mid"), "mid", 
-                                        ifelse(str_detect(class, "high"), "high", NA)))) %>%
-  mutate(cl = parse_factor(cl, levels = c("low", "mid", "high"))) %>% 
-  ggplot(aes(x = class, y = mwh, color = class)) +
-  geom_boxplot() +
-  facet_wrap( ~ cl) +
-  scale_y_log10() +
-  theme_minimal() +
-  theme(axis.text.x = element_blank(),
-      axis.ticks.x = element_blank())
+# ## for testing 
+# m <- regr[, -11]
+# m %>% 
+#   gather(class, value, hu_own:hu_mwh) %>% 
+#   ggplot(aes(x = value)) +
+#   geom_histogram(aes(y = ..density..), binwidth = 0.02) +
+#   facet_wrap( ~ class) +
+#   scale_x_log10()
+# 
+# seattle %>% 
+#   gather(class, hh, very_low_mf_own_hh:high_sf_rent_hh) %>% 
+#   select(geoid, class, hh) %>% 
+#   ggplot(aes(x = hh)) +
+#   geom_histogram(binwidth = 50) +
+#   facet_wrap( ~ class, nrow = 5) +
+#   theme_minimal() + xlim(-100,1500)
+# 
+# seattle %>% 
+#   gather(class, mwh, very_low_mf_own_mwh:high_sf_rent_mwh) %>% 
+#   select(geoid, class, mwh) %>% 
+#   mutate(class = parse_factor(class, levels = names(seattle))) %>% 
+#   mutate(cl = ifelse(str_detect(class, "verylow|low|mod"), "low",
+#                                  ifelse(str_detect(class, "mid"), "mid", 
+#                                         ifelse(str_detect(class, "high"), "high", NA)))) %>%
+#   mutate(cl = parse_factor(cl, levels = c("low", "mid", "high"))) %>% 
+#   ggplot(aes(x = class, y = mwh, color = class)) +
+#   geom_boxplot() +
+#   facet_wrap( ~ cl) +
+#   scale_y_log10() +
+#   theme_minimal() +
+#   theme(axis.text.x = element_blank(),
+#       axis.ticks.x = element_blank())
 
-save(county, seattle, seattle_simple, pot, regr, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
+
+
+save(county, seattle, seattle_simple, pot, regr, regrs, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
 
 load("./data/derived/iv.Rdata")

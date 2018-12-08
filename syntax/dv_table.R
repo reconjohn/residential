@@ -1,4 +1,4 @@
-fhist <- regrs[, c(-1, -8, -11, -12, -13)]
+fhist <- regrs[, -c(1, 3, 8, 9, 10, 13, 15)]
 par(mfrow=c(3,3))
 for(i in 1:length(fhist)){
   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),
