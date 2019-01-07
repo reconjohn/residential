@@ -1,7 +1,7 @@
 ---
 title: "Characteristics of Residential Solar in Seattle"
 author: "Yohan Min"
-date: "Dec 7, 2018"
+date: "Jan 7, 2019"
 output:
   html_document:
     keep_md: yes
@@ -51,37 +51,36 @@ output:
 
 ## Histograms of multiple variables
 
-> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, `the Department of Housing and Urban Development (HUD) 2017` and `City of Seattle open data portal`.
+> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, and `City of Seattle open data portal`.
 
 <img src="residential_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ## Cor plot
 
-> The number of solar installation per 1,000 housing units is the dependent variable (`sol_instl`) per census track. Rest of variables are as follows.
+> The number of solar installation per 100 housing units is the dependent variable (`solar`) per census track. Rest of variables are as follows.
 
 > * `hu_own`: proportion of owner-occupied housing units
 > * `hu_no_mor`: proportion of owner-occupied housing units without a mortgage
 > * `hu_med_val`: normalized median value of owner-occupied housing units 
 > * `hu_ex_1000`: proportion of owner-occupied units with housing costs greater than $1000/month
-> * `edu`: proportion of over 25 year old population with college degree and above
 > * `hh_med_income`: normalized household median income
 > * `hh_gini_index`: household GINI Index of income inequality
 > * `hu_high_sf_own`: proportion of households of high income, single family and owning the house
-> * `lihtc`: low income tax credit qualification (T/F)
+> * `ev`: electric vehicle charger installation per 100 housing units
 
-> The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
+> The dependent variable (`solar`) is correlated to all the variables except for the household GINI index and LITHC qualification.
 
 <img src="residential_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 
 ## Regression
 
-> By exploratory regression analyses, the best model with the highest **R-squared (0.61)** and lowest **AIC (653.69)** was chosen with the two variables, `hu_med_val` and `hu_ex_1000` through OLS.
+> By exploratory regression analyses, the best model with the highest **R-squared (0.678)** was chosen with the two variables, `ev` and `hu_ex_1000` through OLS.
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">sol instl</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">solar</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -91,20 +90,20 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-1.99</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-3.58&nbsp;&ndash;&nbsp;-0.40</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.015</strong></td>
-</tr>
-<tr>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">hu med val</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">4.03</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.01&nbsp;&ndash;&nbsp;8.05</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.052</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.45&nbsp;&ndash;&nbsp;-0.04</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.021</strong></td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">hu ex 1000</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">17.83</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">14.69&nbsp;&ndash;&nbsp;20.96</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.35&nbsp;&ndash;&nbsp;3.67</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">ev</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.90</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.52&nbsp;&ndash;&nbsp;1.28</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 </tr>
 <tr>
@@ -113,7 +112,7 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adjusted R<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.615 / 0.609</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.683 / 0.678</td>
 </tr>
 
 </table>
@@ -175,7 +174,7 @@ output:
 
 ## Factor analysis (Parallel screen)
 
-> It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 2 or 3 factors would be appropriate.
+> It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 3 factors would be appropriate.
 
 <img src="residential_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
@@ -191,24 +190,24 @@ output:
 
 ## Factor analysis (Diagram)
 
-> The first factor (`ML1`) is more related to the higher housing stability (homeownership), the 2nd factor (`ML2`) to the higher economic status, and the 3rd factor (`ML3`) is more related to the higher income inequality.
+> The first factor (`ML2`) is more related to the higher economic status, the 2nd factor (`ML1`) to the higher housing stability (homeownership), and the 3rd factor (`ML3`) is more related to the higher income inequality.
 
 <img src="residential_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 ## Factor correlation for solar installation
 
-> The most loaded, `ML1` is positively correlated with the solar installation variable.
+> The two factors are positively correlated with the solar installation variable.
 
 <img src="residential_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 ## Factor regression
 
-> The value of R-squared of the factor regression is the same as the previous OLS **(0.61)**.
+> The value of R-squared of the factor regression is **(0.634)**.
 
 <table style="border-collapse:collapse; border:none;">
 <tr>
 <th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">&nbsp;</th>
-<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">regrs[["sol instl"]]</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">regrs[["solar"]]</th>
 </tr>
 <tr>
 <td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">Predictors</td>
@@ -218,27 +217,27 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">(Intercept)</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">5.09</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">4.60&nbsp;&ndash;&nbsp;5.58</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.15</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">1.07&nbsp;&ndash;&nbsp;1.24</td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,1]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">3.45</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">2.78&nbsp;&ndash;&nbsp;4.11</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.19</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.07&nbsp;&ndash;&nbsp;0.32</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>0.002</strong></td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,2]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.39</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.25&nbsp;&ndash;&nbsp;1.03</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.232</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.42&nbsp;&ndash;&nbsp;0.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "><strong>&lt;0.001</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">dat[,3]</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.30</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.29&nbsp;&ndash;&nbsp;0.89</td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.325</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">-0.05&nbsp;&ndash;&nbsp;0.17</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">0.275</td>
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">Observations</td>
@@ -246,7 +245,7 @@ output:
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">R<sup>2</sup> / adjusted R<sup>2</sup></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.613 / 0.604</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.642 / 0.634</td>
 </tr>
 
 </table>
@@ -295,20 +294,20 @@ output:
 
 ## Residential solar installation pattern in terms of clustering groups
 
-> Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering, which confirms the factor, `ML1` has a predictive power for the residential solar installation. 
+> Residential solar installation is exactly showing the same pattern of the two factors (`ML1` and `ML2`), the housing stability and the economic status in clustering, which confirms these factors have a predictive power for the residential solar installation. 
 
 <img src="residential_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 
-## Residential solar installation in Low Income Tax Credit
+## Residential solar installation in proportion of owner-occupied units with housing costs greater than $1000/month
 
-> It indicates that lower solar installation proprotion and lower proportion of owner-occupied units with housing costs greater than $1000/month match the pattern of the certified LIHTC census tracks (TRUE).
+> It indicates that the solar installation proprotion is correlated with the proportion of owner-occupied units with housing costs greater than $1000/month.
 
 <img src="residential_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
 
-## Residential solar installation in housing unit median value
+## Residential solar installation in EV charger installation
 
-> Solar installation is correlated with the median value of owner-occupied housing units in general. But if separated by clusers, it shows lower correlations for each cluster. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
+> Solar installation is correlated with the electric vehicle charger installation. 
 
 
 <img src="residential_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
@@ -316,7 +315,7 @@ output:
 
 ## Cumulative solar installation per census track
 
-> Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle. Interestingly, one census track is noticeably high in installation over the period.
+> Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle.
 
 <img src="residential_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
 
@@ -352,13 +351,13 @@ output:
 > Residential solar installation follows patterns of
 
 > * The proportion of owner-occupied units with higher housing cost
-> * Median value of owner-occupied units
+> * EV charger installation 
 
 > Cluster and factor analyses catch solar installation pattern (cluster #1 and #3) in terms of
 
-> * **Higher housing stability (homeownership)** - strongly correlated (0.778)
-> * **Higher economic status** - moderately correlated (0.534)
-> * **Lower income inequality** - less liekly correlated (-0.255)
+> * **Higher housing stability (homeownership)** - strongly correlated (0.78)
+> * **Higher economic status** - moderately correlated (0.66)
+> * **Lower income inequality** - less liekly correlated (-0.34)
 
 > Temporal pattern was also captured such that three noticeable areas were identified
 

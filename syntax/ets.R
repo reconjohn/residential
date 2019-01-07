@@ -1,4 +1,4 @@
-# PV NW seed
+# NW seed on EV
 
 library(readr)
 library(dplyr)
@@ -8,21 +8,21 @@ library(lubridate)
 library(forcats)
 library(pander)
 library(stringr)
-library(quantmod)
+library('quantmod')
 
 load("./data/derived/iv.Rdata")
 
-instl <- read_csv(file = "./data/raw/solar_aggre.csv") %>% 
+ej <- read_csv(file = "./data/raw/ejoin.csv") %>% 
   filter(!is.na(geoid)) %>% 
   mutate(Class = factor(Class)) %>% 
   mutate(geoid = as.character((geoid))) %>% 
   inner_join(regr, by = "geoid") %>% 
-  select(Class, Description, CompletedDate, Latitude, Longitude, Installer, geoid, L_HOOD)
-# glimpse(instl)
-# View(instl)
+  select(Class, CompletedDate, Latitude, Longitude, Installer, geoid, L_HOOD)
+# glimpse(ej)
+# View(ej)
 
 ## data cleaning for time series
-spa <- instl %>% 
+spa <- ej %>% 
   filter(!is.na(geoid)) %>% 
   mutate(date = mdy(CompletedDate),
          L_HOOD = parse_factor(L_HOOD, levels = c("QUEENANNE","MAGNOLIA","NORTHEAST","NORTHWEST",
@@ -35,36 +35,37 @@ spa <- instl %>%
 temp <- spa %>% 
   group_by(geoid) %>% 
   summarise(max = max(sum)) %>% 
-  mutate(tin = ifelse(max > 40, "above", "below")) %>% 
+  mutate(tin = ifelse(max > 10, "above", "below")) %>% 
   select(-max) %>% 
-  mutate(`Over 40` = parse_factor(tin, levels = c("above", "below"))) %>% 
+  mutate(`Over 10` = parse_factor(tin, levels = c("above", "below"))) %>% 
   select(-tin)
 
-temp_spatial <- spa %>% 
+temp_spatiale <- spa %>% 
   left_join(temp, by= "geoid")
+# View(temp_spatiale)
 
 ## plot! 
-g_ts_ts <- temp_spatial %>% 
-  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
-  ggplot(aes(x = date, y = sum, group = geoid, color = `Over 40`))+
+g_ts_ets <- temp_spatiale %>% 
+  filter(date > as.Date("01/01/2010", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum, group = geoid, color = `Over 10`))+
   geom_line(size = 1, alpha = 0.4)+
-  scale_color_manual(name ="Above 40 installations", values = c("red", "black"))+
+  scale_color_manual(name ="Above 10 installations", values = c("red", "black"))+
   xlab("Year") + ylab("Cumulative number of installation") +
   theme_bw() +
   theme(legend.position = c(0.2, 0.7),
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
-g_nb_ts <- temp_spatial %>% 
+g_nb_ets <- temp_spatiale %>% 
   group_by(L_HOOD, date) %>% 
   summarise(total = sum(count)) %>% 
   mutate(sum = cumsum(total)) %>% 
-  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  filter(date > as.Date("01/01/2010", "%m/%d/%Y")) %>% 
   ggplot(aes(x = date, y = sum, group = L_HOOD, color = L_HOOD))+
   geom_line(size = 1, alpha = 0.7)+
-  scale_color_manual(name ="Impact of NW SEED (dotted line) on residential solar in Seattle", 
+  scale_color_manual(name ="No impact of NW SEED (dotted line) on EV in Seattle", 
                      values = c("red","brown","blue","gold4", 
-                                                            "dark green", "purple"))+
+                                "dark green", "purple"))+
   geom_vline(xintercept = as.numeric(as.Date("2011-04-01", "%Y-%m-%d")),
              col = "red", size = 2, alpha = 0.5, linetype = 3) +
   geom_vline(xintercept = as.numeric(as.Date("2011-10-01", "%Y-%m-%d")),
@@ -83,12 +84,25 @@ g_nb_ts <- temp_spatial %>%
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
-nb <- temp_spatial %>% 
+g_to_ets <- temp_spatiale %>% 
+  group_by(date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total)) %>% 
+  filter(date > as.Date("01/01/2010", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum))+
+  geom_line(size = 1, alpha = 0.7)+
+  xlab("Year") + ylab("Cumulative number of EV charger installation") +
+  theme_bw() +
+  theme(legend.position = c(0.2, 0.7),
+        legend.background = element_rect(fill="transparent")) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
+nb <- temp_spatiale %>% 
   distinct(L_HOOD, geoid) %>% 
   group_by((L_HOOD)) %>% 
   tally() 
 
-nts <- temp_spatial %>% 
+nts <- temp_spatiale %>% 
   group_by(L_HOOD, date) %>% 
   summarise(total = sum(count)) %>% 
   mutate(sum = cumsum(total)) %>% 
@@ -101,18 +115,18 @@ nts <- temp_spatial %>%
     L_HOOD == "WESTSEATTLE" ~ sum/ nb[[6,2]]
   ))
 
-g_nbor_ts <- temp_spatial %>% 
-  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+g_nbor_ets <- temp_spatiale %>% 
+  filter(date > as.Date("01/01/2010", "%m/%d/%Y")) %>% 
   ggplot(aes(x = date, y = sum, group = geoid))+
   geom_line(alpha = 0.5, aes(color = "Census track", size = "Census track")) +
   geom_line(data = nts %>% 
-              filter(date > as.Date("01/01/2005", "%m/%d/%Y")),
+              filter(date > as.Date("01/01/2010", "%m/%d/%Y")), 
             aes(x = date, y = mean, group = L_HOOD, color = "Mean", 
-                size = "Mean"), alpha = 0.7) +
+                            size = "Mean"), alpha = 0.7) +
   facet_wrap(~ L_HOOD, nrow = 2) +
-  scale_color_manual(name ="Solar installations",
+  scale_color_manual(name ="EV charger installations",
                      values = c("Census track" = "black", "Mean" = "dodgerblue1")) +
-  scale_size_manual(name ="Solar installations",
+  scale_size_manual(name ="EV charger installations",
                     values = c("Census track" = 0.5, "Mean" = 2)) +
   xlab("Year") + ylab("Cumulative number of installation") +
   theme_bw() +
@@ -121,27 +135,6 @@ g_nbor_ts <- temp_spatial %>%
   scale_x_date(date_breaks = "1 year", date_labels = "%y")
 
 
-## for GIS pro data 
-str(temp_spatial)
-t <- temp_spatial %>% 
-  mutate(year = year(date)) %>% 
-  group_by(geoid, year) %>% 
-  summarise(sum = sum(count)) %>% 
-  spread(geoid, sum)
+save(ej, temp_spatiale, g_ts_ets, g_nb_ets, g_to_ets, g_nbor_ets, file = "./data/derived/ets.Rdata")
 
-t[is.na(t)] <- 0
-
-ts <- t %>% 
-  gather(geoid,value, -year ) %>% 
-  group_by(geoid, year) %>% 
-  summarise(value = value) %>% 
-  mutate(sum = cumsum(value)) %>% 
-  mutate(year = as.Date(str_c("01/01/", as.character(year)), format = "%m/%d/%Y"))
-
-# View(ts)
-# glimpse(ts)
-
-write_csv(ts, path = "./data/derived/ts.csv" )
-save(instl, temp_spatial, ts, g_ts_ts, g_nb_ts, g_nbor_ts, file = "./data/derived/ts.Rdata")
-
-load("./data/derived/ts.Rdata")
+load("./data/derived/ets.Rdata")

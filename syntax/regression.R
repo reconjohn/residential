@@ -22,10 +22,33 @@ library(sjPlot)
 
 ## MASS and dplyr clash each other for select()
 load("./data/derived/ts.Rdata")
+load("./data/derived/ets.Rdata")
+
+po <- ts %>% 
+  filter(year == "2018-01-01") %>% 
+  select(geoid, sum)
+
+poe <- temp_spatiale %>% 
+  group_by(geoid) %>% 
+  summarise(tot = max(sum))
+
+
+regrs <- regr %>% 
+  left_join(po, by = "geoid") %>% 
+  left_join(poe, by = "geoid") %>% 
+  mutate(solar = sum * 100/ hu,
+         ev = tot * 100/ hu) %>% 
+  select(-sum, -hu, -tot)
+
+regrs$solar[is.na(regrs$solar)] <- 0
+regrs$ev[is.na(regrs$ev)] <- 0 
+
+# View(regrs)
 
 ### cor plot
 regrs_p <- regrs %>% 
-  select(-geoid, -lihtc, -hu_blt1979, -non_us, -hu_mwh, -af_race, -wh_race)
+  select(-geoid, -solar, -lihtc, -L_HOOD,-hh_low_mf_rent, -non_us, -hu_blt1979, - hu_mwh,
+         -edu, -wh_race, -af_race)
 
 # View(regrs_p)
 # str(regrs_p)
@@ -33,7 +56,8 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ### parallel plot
 fct <- regrs%>% 
-  select(-geoid, -sol_instl, -lihtc, -hu_blt1979, -non_us, -hu_mwh, -af_race, -wh_race)
+  select(-geoid, -solar, -lihtc, -L_HOOD,-hh_low_mf_rent, -non_us, -hu_blt1979, - hu_mwh,
+         -edu, -wh_race, -af_race)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
@@ -46,10 +70,15 @@ fa.diagram(fa,simple=T)
 
 dat <- as.data.frame(fa$scores)
 # dim(dat)
-plot(dat[,1], regrs[["sol_instl"]], xlab = "The 1st factor", ylab = "Solar installation")
-abline(lm(regrs[["sol_instl"]] ~ dat[,1]), col = "red")
 
-fa_lm_re <- lm(regrs[["sol_instl"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
+par(mfrow=c(1,2))
+plot(dat[,1], regrs[["solar"]], xlab = "ML2", ylab = "Solar installation")
+abline(lm(regrs[["solar"]] ~ dat[,1]), col = "red")
+
+plot(dat[,2], regrs[["solar"]], xlab = "ML1", ylab = "Solar installation")
+abline(lm(regrs[["solar"]] ~ dat[,2]), col = "red")
+
+fa_lm_re <- lm(regrs[["solar"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
   tab_model()
 
 
@@ -133,11 +162,11 @@ g_perf_re <- ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
   geom_point(alpha=0.2) +
   geom_vline(xintercept = 3,color='red')
 
-library(rgl)
-plot3d(fa$scores, col = kmeans$cluster)
+# library(rgl)
+# plot3d(fa$scores, col = kmeans$cluster)
 
 dat1 <- dat
-dat1$Sol <- regrs[["sol_instl"]]
+dat1$Sol <- regrs[["solar"]]
 dat1$Cluster=as.factor(kme$cluster)
 g_pair_re <- ggpairs(dat1, mapping=aes(color=Cluster))+ 
   theme_bw()
@@ -156,33 +185,33 @@ c_reg$cluster <- as.factor(kme$cluster)
 View(c_reg)
 
 ## regrsession 
-# reg <- lm(sol_instl ~ .,regrs[-c(1,3,9,10,15)])
+# reg <- lm(solar ~ .,regrs[-c(1,14)])
 # MASS::stepAIC(reg)
-# summary(lm(formula = sol_instl ~ hu_ex_1000  + hu_med_val, data = regrs[-c(1, 3, 9, 10, 15)]))
+# summary(lm(formula = solar ~ hu_ex_1000 + ev, data = regrs[-c(1, 14)]))
 
-va_lm_re <- lm(formula = sol_instl ~ hu_med_val + hu_ex_1000, data = regrs[-c(1)]) %>% 
+va_lm_re <- lm(formula = solar ~ hu_ex_1000 + ev, data = regrs[-c(1, 14)]) %>% 
   tab_model()
 
 ## data analysis
 g_sol_re <- c_reg %>% 
-  ggplot(aes(x = cluster, y = sol_instl, color = cluster)) +
+  ggplot(aes(x = cluster, y = solar, color = cluster)) +
   geom_boxplot() +
   ggtitle("Solar installation pattern per cluster")+ 
   theme_bw()
 
 g_ef1_re <- c_reg %>% 
-  ggplot(aes(x = hu_ex_1000, y = sol_instl, color = cluster, size = lihtc)) +
-  geom_point() +
-  ggtitle("Solar installation pattern per cluster")+ 
-  theme_bw()
-
-g_ef2_re <- c_reg %>% 
-ggplot(aes(x = hu_med_val, y = sol_instl, color = cluster)) +
+  ggplot(aes(x = hu_ex_1000, y = solar, color = cluster)) +
   geom_point(alpha = 0.4)+
   geom_smooth(span = 0.9)+ 
   theme_bw()
 
-save(regrs_p, fct, fa, dat, dat1, kme, va_lm_re, fa_lm_re, 
+g_ef2_re <- c_reg %>% 
+  ggplot(aes(x = ev, y = solar, color = cluster)) +
+  geom_point(alpha = 0.4)+
+  geom_smooth(span = 0.9)+ 
+  theme_bw()
+
+save(regrs, regrs_p, fct, fa, dat, dat1, kme, va_lm_re, fa_lm_re, 
      wss, g_perf_re, g_pair_re, g_pair1_re, g_sol_re, g_ef1_re, g_ef2_re, 
      file = "./data/derived/reg.Rdata")
 

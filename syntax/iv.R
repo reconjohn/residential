@@ -1,3 +1,5 @@
+# Social characteristics and solar potential
+
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -8,6 +10,13 @@ library(pander)
 library(stringr)
 
 data <- read_csv(file = "./data/raw/seeds_ii_replica.csv")
+data1 <- read_csv(file = "./data/raw/ACS_15_5YR_B25003.csv")[-1,] %>% 
+  rename(geoid = GEO.id2, hu = HD01_VD01, hu_own = HD01_VD02 ) %>% 
+  select(geoid, hu, hu_own) %>% 
+  mutate_all(funs(as.numeric))
+data2 <- read_csv(file = "./data/raw/neighbor.csv") %>% 
+  select(geoid, L_HOOD)
+  
 str(data)
 head(data)
 View(data)
@@ -18,7 +27,7 @@ county <- data %>%
   select(geoid,ends_with("hh"),ends_with("mwh"),hh_med_income,
          hh_gini_index,pop_total,pop_non_us_citizen,pop_african_american,pop_caucasian,
          pop25_some_college_plus,
-         hu_own,hu_rent,hu_monthly_owner_costs_greaterthan_1000dlrs,
+         hu_monthly_owner_costs_greaterthan_1000dlrs,
          hu_monthly_owner_costs_lessthan_1000dlrs,hu_med_val, hu_no_mortgage,
          hu_vintage_2010toafter, hu_vintage_2000to2009, hu_vintage_1980to1999,
          hu_vintage_1960to1970, hu_vintage_1940to1959, hu_vintage_1939toearlier,lihtc_qualified,
@@ -28,13 +37,13 @@ county$hh_med_income[is.na(county$hh_med_income)] = 7115
 
 ## Seattle 
 seattle <- county %>% 
-  filter(geoid >= 53033000100, geoid <= 53033012100, !is.na(hu_med_val)) 
+  filter(geoid >= 53033000100, geoid <= 53033012100, !is.na(hu_med_val)) %>% 
+  left_join(data1, by = "geoid")
 summary(seattle)
 
 seattle_simple <- seattle %>% 
   gather(char,val, very_low_mf_own_hh:high_sf_rent_mwh) %>% 
-  mutate(hu = hu_rent + hu_own,
-         hu_own = hu_own/ hu,
+  mutate(hu_own = hu_own/ hu,
          hu_blt1979 = (hu_vintage_1960to1970+hu_vintage_1940to1959+hu_vintage_1939toearlier)/ 
            (hu_vintage_2010toafter+ hu_vintage_2000to2009+ hu_vintage_1980to1999+
             hu_vintage_1960to1970+ hu_vintage_1940to1959+ hu_vintage_1939toearlier),
@@ -57,19 +66,18 @@ seattle_simple <- seattle %>%
          own = ifelse(str_detect(char, "own"), "own", "rent"),
          sep = ifelse(str_detect(char, "hh"), "hh", "mwh")) %>% 
   spread(sep, val) %>% 
-  select(geoid, incomeclass, type, own, hh, mwh, 
+  select(geoid, incomeclass, type, own, hh, hu, mwh, 
          hu_own, hu_blt1979, hu_no_mor,hu_med_val, hu_ex_1000, 
          edu, wh_race, af_race, non_us, hh_med_income, hh_gini_index,lihtc) %>% 
   mutate_at(vars(type,own), funs(factor)) 
-
-seattle_simple$hu_ex_1000[seattle_simple$geoid == 53033000500] = 1
 
 seattle_simple <- seattle_simple %>% 
   filter(!is.na(hh)) %>% 
   select(geoid, incomeclass, type, own, hh) %>% 
   inner_join(seattle_simple %>% 
                filter(!is.na(mwh)) %>% 
-               select(-hh), by = c("geoid", "incomeclass", "type", "own"))
+               select(-hh), by = c("geoid", "incomeclass", "type", "own")) %>% 
+  inner_join(data2, by = "geoid")
 
   
 View(seattle_simple)
@@ -119,6 +127,11 @@ rich <- pot %>%
   select(geoid, `hh_high_sf_own` = hh_prp)
 rich <- rich[,3:4]
 
+poor <- pot %>% 
+  filter(`Income class` == "low" & type == "mf" & own == "rent") %>% 
+  select(geoid, hh_low_mf_rent = hh_prp)
+poor <- poor[,3:4]
+
 hu_mwh <- pot %>% 
   group_by(geoid) %>% 
   summarise(hu_mwh = sum(`MWh/house hold`))
@@ -126,13 +139,13 @@ hu_mwh <- pot %>%
 regr <- seattle_simple %>% 
   filter(incomeclass == "low", type == "mf", own == "rent") %>% 
   inner_join(rich, by = "geoid") %>% 
+  inner_join(poor, by = "geoid") %>% 
   inner_join(hu_mwh, by = "geoid") %>% 
-  select(-incomeclass, -type, -own, -hh, -mwh)
+  select(-incomeclass, -type, -own, -hh, -mwh) %>% 
+  mutate(geoid = as.character(geoid))
 
-po <- read_csv(file = "./data/derived/potential.csv")
-regrs <- regr %>% 
-  left_join(po %>% 
-              select(geoid, sol_instl), by = "geoid")
+# glimpse(regr)
+
 
 ## Plot
 # fhist <- regrs[, c(-1, -11)]
@@ -179,8 +192,6 @@ regrs <- regr %>%
 #   theme(axis.text.x = element_blank(),
 #       axis.ticks.x = element_blank())
 
-
-
-save(county, seattle, seattle_simple, pot, regr, regrs, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
+save(county, seattle, seattle_simple, pot, regr, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
 
 load("./data/derived/iv.Rdata")

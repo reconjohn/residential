@@ -108,7 +108,7 @@ seattle %>%
 
 ## Histograms of multiple variables
 
-> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, `the Department of Housing and Urban Development (HUD) 2017` and `City of Seattle open data portal`.
+> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, and `City of Seattle open data portal`.
 
 ```{r, fig.height=5}
 source("../syntax/dv_table.R")
@@ -116,19 +116,18 @@ source("../syntax/dv_table.R")
 
 ## Cor plot
 
-> The number of solar installation per 1,000 housing units is the dependent variable (`sol_instl`) per census track. Rest of variables are as follows.
+> The number of solar installation per 100 housing units is the dependent variable (`solar`) per census track. Rest of variables are as follows.
 
 > * `hu_own`: proportion of owner-occupied housing units
 > * `hu_no_mor`: proportion of owner-occupied housing units without a mortgage
 > * `hu_med_val`: normalized median value of owner-occupied housing units 
 > * `hu_ex_1000`: proportion of owner-occupied units with housing costs greater than $1000/month
-> * `edu`: proportion of over 25 year old population with college degree and above
 > * `hh_med_income`: normalized household median income
 > * `hh_gini_index`: household GINI Index of income inequality
 > * `hu_high_sf_own`: proportion of households of high income, single family and owning the house
-> * `lihtc`: low income tax credit qualification (T/F)
+> * `ev`: electric vehicle charger installation per 100 housing units
 
-> The dependent variable (`sol_instl`) is correlated to all the variables except for the household GINI index and LITHC qualification.
+> The dependent variable (`solar`) is correlated to all the variables except for the household GINI index and LITHC qualification.
 
 ```{r}
 ### cor plot
@@ -139,7 +138,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ## Regression
 
-> By exploratory regression analyses, the best model with the highest **R-squared (0.61)** and lowest **AIC (653.69)** was chosen with the two variables, `hu_med_val` and `hu_ex_1000` through OLS.
+> By exploratory regression analyses, the best model with the highest **R-squared (0.678)** was chosen with the two variables, `ev` and `hu_ex_1000` through OLS.
 
 ```{r}
 va_lm_re
@@ -202,11 +201,11 @@ va_lm_re
 
 ## Factor analysis (Parallel screen)
 
-> It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 2 or 3 factors would be appropriate.
+> It would be useful to include all the variables for a model rather than selecting only two variables. With a factor analysis, all the variables would be used for the model identification. The parallel screen confirms 3 factors would be appropriate.
 
 ```{r}
 
-fa.parallel(fct,fa="fa",n.iter=50)
+fa.parallel(fct,fa="fa",n.iter=100)
 ```
 
 ## Factor analysis (Plot)
@@ -220,7 +219,7 @@ factor.plot(fa, labels=rownames(fa$loadings))
 
 ## Factor analysis (Diagram)
 
-> The first factor (`ML1`) is more related to the higher housing stability (homeownership), the 2nd factor (`ML2`) to the higher economic status, and the 3rd factor (`ML3`) is more related to the higher income inequality.
+> The first factor (`ML2`) is more related to the higher economic status, the 2nd factor (`ML1`) to the higher housing stability (homeownership), and the 3rd factor (`ML3`) is more related to the higher income inequality.
 
 ```{r}
 fa.diagram(fa,simple=T)
@@ -228,16 +227,22 @@ fa.diagram(fa,simple=T)
 
 ## Factor correlation for solar installation
 
-> The most loaded, `ML1` is positively correlated with the solar installation variable.
+> The two factors are positively correlated with the solar installation variable.
 
 ```{r}
-plot(dat[,1], regrs[[14]], xlab = "The 1st factor", ylab = "Solar installation")
-abline(lm(regrs[[14]] ~ dat[,1]), col = "red")
+par(mfrow=c(1,2))
+
+plot(dat[,1], regrs[["solar"]], xlab = "ML2", ylab = "Solar installation")
+abline(lm(regrs[["solar"]] ~ dat[,1]), col = "red")
+
+plot(dat[,2], regrs[["solar"]], xlab = "ML1", ylab = "Solar installation")
+abline(lm(regrs[["solar"]] ~ dat[,2]), col = "red")
+
 ```
 
 ## Factor regression
 
-> The value of R-squared of the factor regression is the same as the previous OLS **(0.61)**.
+> The value of R-squared of the factor regression is **(0.634)**.
 
 ```{r}
 fa_lm_re
@@ -301,7 +306,7 @@ g_pair1_re
 
 ## Residential solar installation pattern in terms of clustering groups
 
-> Residential solar installation is exactly showing the same pattern of the 1st factor (`ML1`), the housing stability in clustering, which confirms the factor, `ML1` has a predictive power for the residential solar installation. 
+> Residential solar installation is exactly showing the same pattern of the two factors (`ML1` and `ML2`), the housing stability and the economic status in clustering, which confirms these factors have a predictive power for the residential solar installation. 
 
 ```{r}
 g_sol_re
@@ -309,18 +314,18 @@ g_sol_re
 ```
 
 
-## Residential solar installation in Low Income Tax Credit
+## Residential solar installation in proportion of owner-occupied units with housing costs greater than $1000/month
 
-> It indicates that lower solar installation proprotion and lower proportion of owner-occupied units with housing costs greater than $1000/month match the pattern of the certified LIHTC census tracks (TRUE).
+> It indicates that the solar installation proprotion is correlated with the proportion of owner-occupied units with housing costs greater than $1000/month.
 
 ```{r}
 
 g_ef1_re
 ```
 
-## Residential solar installation in housing unit median value
+## Residential solar installation in EV charger installation
 
-> Solar installation is correlated with the median value of owner-occupied housing units in general. But if separated by clusers, it shows lower correlations for each cluster. Cluster #3, #1 and #2 in order are more likely to have higher solar installation.
+> Solar installation is correlated with the electric vehicle charger installation. 
 
 
 ```{r}
@@ -330,7 +335,7 @@ g_ef2_re
 
 ## Cumulative solar installation per census track
 
-> Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle. Interestingly, one census track is noticeably high in installation over the period.
+> Time series analysis will help to understand the spatial-temporal pattern of residential solar installation in Seattle.
 
 ```{r}
 g_ts_ts
@@ -368,13 +373,13 @@ g_ts_ts
 > Residential solar installation follows patterns of
 
 > * The proportion of owner-occupied units with higher housing cost
-> * Median value of owner-occupied units
+> * EV charger installation 
 
 > Cluster and factor analyses catch solar installation pattern (cluster #1 and #3) in terms of
 
-> * **Higher housing stability (homeownership)** - strongly correlated (0.778)
-> * **Higher economic status** - moderately correlated (0.534)
-> * **Lower income inequality** - less liekly correlated (-0.255)
+> * **Higher housing stability (homeownership)** - strongly correlated (0.78)
+> * **Higher economic status** - moderately correlated (0.66)
+> * **Lower income inequality** - less liekly correlated (-0.34)
 
 > Temporal pattern was also captured such that three noticeable areas were identified
 
