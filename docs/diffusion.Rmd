@@ -1,0 +1,82 @@
+---
+title: "Diffusion"
+author: "Yohan Min"
+date: "`r gsub(' 0', ' ', format(Sys.Date(), format='%b %d, %Y'))`"
+output:
+  html_document:
+    keep_md: yes
+    preserve_yaml: yes
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE, echo= F}
+knitr::opts_chunk$set(echo = FALSE, warning= F, message= F, fig.align="center")
+library(tidyverse) # includes all the packages below 
+# library(readr)
+# library(dplyr)
+# library(tidyr)
+# library(ggplot2)
+# library(tibble)
+# library(forcats)
+# library(stringr)
+library(lubridate)
+library(pander)
+library(psych)
+library (cluster)
+library(reshape)
+library(reshape2)
+library(som)
+library(GPArotation)
+library(corrplot)
+library(GGally)
+# library(MASS)
+library(faraway)
+library(sjPlot)
+```
+
+
+```{r load data}
+
+load("../data/derived/iv.Rdata")
+load("../data/derived/dv.Rdata")
+load("../data/derived/ts.Rdata")
+load("../data/derived/reg.Rdata")
+```
+
+
+# Diffusion of innovation 
+
+> The best policy for residential solar adoption is the local campaign leading to the PV awareness and community active involvement which causes the solar installation spread over the region. 
+
+## PV trend in Seattle
+```{r}
+load("../data/derived/ts.Rdata")
+g_nbor_ts
+```
+
+## Impact of NWseed 
+
+```{r}
+g_nb_ts
+```
+
+* January-April 2011 Queen Anne 30 Queen Anne homes for 130 kilowatts of solar!
+* July-October 2011 Magnolia 29 Magnolia homes for 114 kilowatts of solar!
+* January-April 2012 NE 52 Northeast Seattle homes for 246 kilowatts of solar!
+* January-April 2013 NW 141 Northwest Seattle homes for 640 kilowatts of solar!
+* July-October 2013 Central/ SE 185 homes for 885 kilowatts of solar!
+* July – October 2014 SW 111 homes for 684 kW
+
+> A function of time and amount - earlier and larger amount of adoption expedites the diffusion!
+
+> The best policy for residential solar adoption is the local campaign leading to the PV awareness and community active involvement which accelerates the solar installation spread over the region. 
+
+```{r}
+grid.arrange(p1, p2, p3, nrow = 3)
+```
+

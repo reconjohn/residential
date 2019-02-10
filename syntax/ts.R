@@ -9,6 +9,7 @@ library(forcats)
 library(pander)
 library(stringr)
 library(quantmod)
+library(gridExtra)
 
 load("./data/derived/iv.Rdata")
 
@@ -79,7 +80,7 @@ g_nb_ts <- temp_spatial %>%
              col = "purple", size = 2,alpha = 0.5, linetype = 3) +
   xlab("Year") + ylab("Cumulative number of installation") +
   theme_bw() +
-  theme(legend.position = c(0.2, 0.7),
+  theme(legend.position = c(0.5, 0.7),
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
@@ -120,6 +121,62 @@ g_nbor_ts <- temp_spatial %>%
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%y")
 
+# time impact (6 months)
+# 30 vs. 29
+p1 <- temp_spatial %>% 
+  filter(L_HOOD %in% c("QUEENANNE","MAGNOLIA")) %>% 
+  group_by(L_HOOD, date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total)) %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum, group = L_HOOD, color = L_HOOD))+
+  geom_line(size = 1, alpha = 0.7)+
+  scale_color_manual(name ="Impact of Time (6 months)\n # panels: 30 vs. 29", 
+                     values = c("red","brown","blue","gold4", 
+                                "dark green", "purple"))+
+  xlab("Year") + ylab("") +
+  theme_bw() +
+  theme(legend.position = c(0.2, 0.7),
+        legend.background = element_rect(fill="transparent")) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
+# 141 vs. 185
+p2 <- temp_spatial %>% 
+  filter(L_HOOD %in% c("NORTHWEST","CENTSOUTH")) %>% 
+  group_by(L_HOOD, date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total)) %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum, group = L_HOOD, color = L_HOOD))+
+  geom_line(size = 1, alpha = 0.7)+
+  scale_color_manual(name ="Impact of Time (6 months)\n # panels: 141 vs. 185", 
+                     values = c("gold4","dark green"))+
+  xlab("Year") + ylab("Cumulative number of installation") +
+  theme_bw() +
+  theme(legend.position = c(0.2, 0.7),
+        legend.background = element_rect(fill="transparent")) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
+# amount and time impact (2.5 years)
+# 52 vs. 111
+p3 <- temp_spatial %>% 
+  filter(L_HOOD %in% c("NORTHEAST","WESTSEATTLE")) %>% 
+  group_by(L_HOOD, date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total)) %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum, group = L_HOOD, color = L_HOOD))+
+  geom_line(size = 1, alpha = 0.7)+
+  scale_color_manual(name ="Impact of Time (2.5 years)\n # panels: 52 vs. 111", 
+                     values = c("blue","purple"))+
+  xlab("Year") + ylab("") +
+  theme_bw() +
+  theme(legend.position = c(0.2, 0.7),
+        legend.background = element_rect(fill="transparent")) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
+grid.arrange(p1, p2, p3, nrow = 1)
+
 
 ## for GIS pro data 
 str(temp_spatial)
@@ -142,6 +199,6 @@ ts <- t %>%
 # glimpse(ts)
 
 write_csv(ts, path = "./data/derived/ts.csv" )
-save(instl, temp_spatial, ts, g_ts_ts, g_nb_ts, g_nbor_ts, file = "./data/derived/ts.Rdata")
+save(instl, temp_spatial, ts, g_ts_ts, g_nb_ts, g_nbor_ts, p1, p2, p3, file = "./data/derived/ts.Rdata")
 
 load("./data/derived/ts.Rdata")

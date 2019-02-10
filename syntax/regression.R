@@ -23,41 +23,54 @@ library(sjPlot)
 ## MASS and dplyr clash each other for select()
 load("./data/derived/ts.Rdata")
 load("./data/derived/ets.Rdata")
+load("./data/derived/iv.Rdata")
 
 po <- ts %>% 
   filter(year == "2018-01-01") %>% 
-  select(geoid, sum)
+  select(geoid, sum) %>% 
+  mutate(n_s = sum) %>% 
+  select(-sum)
 
 poe <- temp_spatiale %>% 
   group_by(geoid) %>% 
-  summarise(tot = max(sum))
+  summarise(n_e = max(sum)) 
 
+N = sum(regr$hu) # total number of hh in Seattle
+P = sum(po$n_s, na.rm = T)/ N # total number of solar/ N
+Pe = sum(poe$n_e, na.rm = T)/ N # total number of EV/ N
 
 regrs <- regr %>% 
   left_join(po, by = "geoid") %>% 
   left_join(poe, by = "geoid") %>% 
-  mutate(solar = sum * 100/ hu,
-         ev = tot * 100/ hu) %>% 
-  select(-sum, -hu, -tot)
-
-regrs$solar[is.na(regrs$solar)] <- 0
-regrs$ev[is.na(regrs$ev)] <- 0 
+  mutate(solar_E = ifelse(is.na(n_s), hu*P+0.5, hu*P),
+         n_s = ifelse(is.na(n_s), 0.5, n_s),
+         SMR_s = n_s/ solar_E,
+         se_SMR_s = sqrt(SMR_s/ solar_E),
+         EV_E = ifelse(is.na(n_e), hu*Pe+0.5, hu*Pe),
+         n_e = ifelse(is.na(n_e), 0.5, n_e),
+         SMR_e = n_e/ EV_E,
+         se_SMR_e = sqrt(SMR_e/ EV_E))
 
 # View(regrs)
+plot(regrs$se_SMR_s, regrs$SMR_s)
+plot(regrs$se_SMR_e, regrs$SMR_e)
 
-### cor plot
+## cor plot
 regrs_p <- regrs %>% 
-  select(-geoid, -solar, -lihtc, -L_HOOD,-hh_low_mf_rent, -non_us, -hu_blt1979, - hu_mwh,
-         -edu, -wh_race, -af_race)
+  select(-geoid, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -non_us, 
+         -hu_ex_1000, -hu_blt1979, - hu_mwh, -edu, -wh_race, -af_race, -hu, -n_s, -n_e,
+         -se_SMR_s, -se_SMR_e)
 
 # View(regrs_p)
 # str(regrs_p)
 corrplot(cor(regrs_p), method = "ellipse")
 
-### parallel plot
+
+## Parallel plot
 fct <- regrs%>% 
-  select(-geoid, -solar, -lihtc, -L_HOOD,-hh_low_mf_rent, -non_us, -hu_blt1979, - hu_mwh,
-         -edu, -wh_race, -af_race)
+  select(-geoid, -SMR_s, -SMR_e, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -non_us,
+         -hu_ex_1000, -hu_blt1979, -hu_mwh, -edu, -wh_race, -af_race,-hu, -n_s, -n_e,
+         -se_SMR_s, -se_SMR_e)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
@@ -71,14 +84,37 @@ fa.diagram(fa,simple=T)
 dat <- as.data.frame(fa$scores)
 # dim(dat)
 
-par(mfrow=c(1,2))
-plot(dat[,1], regrs[["solar"]], xlab = "ML2", ylab = "Solar installation")
-abline(lm(regrs[["solar"]] ~ dat[,1]), col = "red")
 
-plot(dat[,2], regrs[["solar"]], xlab = "ML1", ylab = "Solar installation")
-abline(lm(regrs[["solar"]] ~ dat[,2]), col = "red")
+##### Solar 
+# SMR: vector
+# dat: FA score dataframe
 
-fa_lm_re <- lm(regrs[["solar"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
+fn_fa_plt <- function(SMR, dat){
+  par(mfrow=c(1,3))
+  ML_ord = c("ML2", "ML1", "ML3")
+  if (str_detect(deparse(substitute(SMR)), "SMR_s")){
+    for(i in seq_along(dat)){
+      plot(dat[,i], SMR, xlab = ML_ord[i], 
+           ylab = expression("Solar installation ("~Y[i]/E[i]~")"))
+      abline(lm(SMR ~ dat[,i]), col = "red")
+      }
+    } else {
+      for(i in seq_along(dat)){
+        plot(dat[,i], SMR, xlab = ML_ord[i], 
+             ylab = expression("EV charger installation ("~Y[i]/E[i]~")"))
+        abline(lm(SMR ~ dat[,i]), col = "red")
+    }
+  }
+}
+
+# fn_fa_plt(regrs[["SMR_s"]], dat)
+
+## FA regression
+fa_lm_re <- lm(regrs[["SMR_s"]] ~ dat[,1] + dat[,2]) %>% 
+  tab_model()
+
+fa_glm_re <- glm(regrs[["n_s"]] ~ offset(log(regrs[["solar_E"]])) + dat[,1] + 
+                   dat[,2], family= "poisson") %>% 
   tab_model()
 
 
@@ -165,54 +201,95 @@ g_perf_re <- ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
 # library(rgl)
 # plot3d(fa$scores, col = kmeans$cluster)
 
-dat1 <- dat
-dat1$Sol <- regrs[["solar"]]
-dat1$Cluster=as.factor(kme$cluster)
-g_pair_re <- ggpairs(dat1, mapping=aes(color=Cluster))+ 
-  theme_bw()
-
-g_pair1_re <- ggpairs(dat1, columns = 1:4, 
-        aes(color=Cluster, alpha=0.4), 
-        title="Scatterplot Matrix",
-        upper=list(continuous="density", combo="box"),
-        lower=list(continuous="smooth", combo="dot")) +
-  theme_light() +
-  theme(plot.title=element_text(size=10))+ 
-  theme_bw()
-
-c_reg <- regrs
-c_reg$cluster <- as.factor(kme$cluster)
-View(c_reg)
-
-## regrsession 
-# reg <- lm(solar ~ .,regrs[-c(1,14)])
+## Regrsession 
+# reg <- glm(n_s ~ hu_no_mor + hu_own + hu_med_val + hh_high_sf_own + hh_med_income +
+#              hh_gini_index + offset(log(solar_E)),
+#            data= regrs[-c(1,2,15)], family= "poisson")
 # MASS::stepAIC(reg)
-# summary(lm(formula = solar ~ hu_ex_1000 + ev, data = regrs[-c(1, 14)]))
+# summary(reg)
 
-va_lm_re <- lm(formula = solar ~ hu_ex_1000 + ev, data = regrs[-c(1, 14)]) %>% 
+va_glm_re <- glm(n_s ~ hu_own + hu_med_val + offset(log(solar_E)),
+                 data= regrs[-c(1,2,15)], family= "poisson") %>% 
   tab_model()
 
-## data analysis
-g_sol_re <- c_reg %>% 
-  ggplot(aes(x = cluster, y = solar, color = cluster)) +
-  geom_boxplot() +
-  ggtitle("Solar installation pattern per cluster")+ 
-  theme_bw()
+## Plot
+fn_tot_plt <- function(regrs, dat, SMR){
+  set.seed(5099)
+  kme <- kmeans(dat,center=3)
+  dat1 <- dat
+  dat1$SMR <- regrs[[SMR]]
+  dat1$Cluster=as.factor(kme$cluster)
+  pair <- ggpairs(dat1, mapping=aes(color=Cluster))+ 
+    theme_bw()
+  
+  pair1 <- ggpairs(dat1, columns = 1:4, 
+                        aes(color=Cluster, alpha=0.4), 
+                        title="Scatterplot Matrix",
+                        upper=list(continuous="density", combo="box"),
+                        lower=list(continuous="smooth", combo="dot")) +
+    theme_light() +
+    theme(plot.title=element_text(size=10))+ 
+    theme_bw()
+  
+  c_reg <- regrs
+  c_reg$cluster <- as.factor(kme$cluster)
+  
+  clu <- c_reg %>% 
+    ggplot(aes(x = cluster, y = !!sym(SMR), color = cluster)) +
+    geom_boxplot() +
+    ggtitle("Installation pattern per cluster")+ 
+    theme_bw()
+  
+  all_plt = list(pair, pair1, clu)
+  return(all_plt)
+}
+  
+# fn_tot_plt(regrs, dat, "SMR_s")
 
-g_ef1_re <- c_reg %>% 
-  ggplot(aes(x = hu_ex_1000, y = solar, color = cluster)) +
-  geom_point(alpha = 0.4)+
-  geom_smooth(span = 0.9)+ 
-  theme_bw()
+fn_lm_plt <- function(var, SMR){
+  ef <- list()
+  for(i in seq_along(var)){
+    ef[[i]] <- c_reg %>% 
+      ggplot(aes(x = !!sym(var[i]), y = !!sym(SMR), color = cluster)) +
+      geom_point(alpha = 0.4)+
+      geom_smooth(span = 0.9)+ 
+      theme_bw()
+  }
+  return(ef)
+}
 
-g_ef2_re <- c_reg %>% 
-  ggplot(aes(x = ev, y = solar, color = cluster)) +
-  geom_point(alpha = 0.4)+
-  geom_smooth(span = 0.9)+ 
-  theme_bw()
+var_s <- c("hu_own", "hu_med_val")
+# fn_lm_plt(var_glm, "SMR_s")
 
-save(regrs, regrs_p, fct, fa, dat, dat1, kme, va_lm_re, fa_lm_re, 
-     wss, g_perf_re, g_pair_re, g_pair1_re, g_sol_re, g_ef1_re, g_ef2_re, 
+
+##### EV
+# fn_fa_plt(regrs[["SMR_e"]], dat)
+
+## FA regression
+fa_lme_re <- lm(regrs[["SMR_e"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
+  tab_model()
+
+fa_glme_re <- glm(regrs[["n_e"]] ~ offset(log(regrs[["EV_E"]])) + dat[,1] + 
+                   dat[,2] + dat[,3], family= "poisson") %>% 
+  tab_model()
+
+## Plots
+# fn_tot_plt(regrs, dat, "SMR_e")
+var_e <- c("hu_own", "hu_med_val","hh_med_income", "hh_gini_index")
+# fn_lm_plt(var_e, "SMR_e")
+
+## Regrsession 
+# rege <- glm(n_e ~ hu_own + hu_med_val + hh_med_income + hh_gini_index + offset(log(EV_E)),
+#            data= regrs[-c(1,2,15)], family= "poisson")
+# summary(rege)
+
+va_glme_re <- glm(n_e ~ hu_own + hu_med_val + hh_med_income + hh_gini_index + 
+                    offset(log(EV_E)), data= regrs[-c(1,2,15)], family= "poisson") %>% 
+  tab_model()
+
+
+save(regrs, regrs_p, c_reg, fct, fa, dat, kme, g_perf_re, fa_lm_re, fa_glm_re, va_glm_re,
+     va_glme_re, fa_lme_re, fa_glme_re, fn_fa_plt, fn_tot_plt, fn_lm_plt, var_e, var_s,
      file = "./data/derived/reg.Rdata")
 
 load("./data/derived/reg.Rdata")
