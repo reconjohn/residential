@@ -1,4 +1,5 @@
-fhist <- regrs[, c(3,5,6,12,13,21,22,23,24)]
+# names(regrs)
+fhist <- regrs[, c(3,4,6,7,8,13,14,17,24)]
 par(mfrow=c(3,3))
 for(i in 1:length(fhist)){
   hist(fhist[[i]], main= paste("Histogram of\n", names(fhist)[i]),

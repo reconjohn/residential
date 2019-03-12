@@ -41,9 +41,9 @@ Pe = sum(poe$n_e, na.rm = T)/ N # total number of EV/ N
 
 regrs <- regr %>% 
   left_join(po, by = "geoid") %>% 
-  left_join(poe, by = "geoid") %>% 
-  mutate(solar_E = ifelse(is.na(n_s), hu*P+0.5, hu*P),
-         n_s = ifelse(is.na(n_s), 0.5, n_s),
+  left_join(poe, by = "geoid") %>%
+  mutate(n_s = ifelse(is.na(n_s), 0.5, n_s),
+         solar_E = ifelse(is.na(n_s), hu*P+0.5, hu*P),
          SMR_s = n_s/ solar_E,
          se_SMR_s = sqrt(SMR_s/ solar_E),
          EV_E = ifelse(is.na(n_e), hu*Pe+0.5, hu*Pe),
@@ -58,8 +58,8 @@ plot(regrs$se_SMR_e, regrs$SMR_e)
 ## cor plot
 regrs_p <- regrs %>% 
   select(-geoid, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -non_us, 
-         -hu_ex_1000, -hu_blt1979, - hu_mwh, -edu, -wh_race, -af_race, -hu, -n_s, -n_e,
-         -se_SMR_s, -se_SMR_e)
+         -hu_no_mor, -hu_blt1979, - hu_mwh, -edu, -wh_race, -af_race, -hu, -hh_high_sf_own, 
+         -n_s, -n_e, -se_SMR_s, -se_SMR_e, -SMR_e)
 
 # View(regrs_p)
 # str(regrs_p)
@@ -68,9 +68,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ## Parallel plot
 fct <- regrs%>% 
-  select(-geoid, -SMR_s, -SMR_e, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -non_us,
-         -hu_ex_1000, -hu_blt1979, -hu_mwh, -edu, -wh_race, -af_race,-hu, -n_s, -n_e,
-         -se_SMR_s, -se_SMR_e)
+  select(-geoid, -SMR_s, -SMR_e, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -hh_high_sf_own,-non_us, -hu_ex_1000, -hu_blt1979, -hu_mwh, -edu, -wh_race, -af_race,-hu, -n_s, -n_e, -se_SMR_s, -se_SMR_e)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
@@ -91,7 +89,7 @@ dat <- as.data.frame(fa$scores)
 
 fn_fa_plt <- function(SMR, dat){
   par(mfrow=c(1,3))
-  ML_ord = c("ML2", "ML1", "ML3")
+  ML_ord = c("ML1", "ML2", "ML3")
   if (str_detect(deparse(substitute(SMR)), "SMR_s")){
     for(i in seq_along(dat)){
       plot(dat[,i], SMR, xlab = ML_ord[i], 
@@ -202,13 +200,14 @@ g_perf_re <- ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
 # plot3d(fa$scores, col = kmeans$cluster)
 
 ## Regrsession 
-# reg <- glm(n_s ~ hu_no_mor + hu_own + hu_med_val + hh_high_sf_own + hh_med_income +
-#              hh_gini_index + offset(log(solar_E)),
-#            data= regrs[-c(1,2,15)], family= "poisson")
+# names(regrs)
+# reg <- lm(SMR_s ~ hu + hu_own + single_unit+hu_blt1979+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+lihtc+high_income, data= regrs)
 # MASS::stepAIC(reg)
+# reg <- lm(SMR_s ~ single_unit + hu_med_val + hu_ex_1000, data = regrs)
+reg <- glm(n_s ~ single_unit + hu_med_val + hu_ex_1000 + offset(log(solar_E)), data= regrs, family= "poisson")
 # summary(reg)
 
-va_glm_re <- glm(n_s ~ hu_own + hu_med_val + offset(log(solar_E)),
+va_glm_re <- glm(n_s ~ single_unit + hu_med_val + hu_ex_1000 + offset(log(solar_E)),
                  data= regrs[-c(1,2,15)], family= "poisson") %>% 
   tab_model()
 
@@ -218,19 +217,35 @@ fn_tot_plt <- function(regrs, dat, SMR){
   kme <- kmeans(dat,center=3)
   dat1 <- dat
   dat1$SMR <- regrs[[SMR]]
-  dat1$Cluster=as.factor(kme$cluster)
-  pair <- ggpairs(dat1, mapping=aes(color=Cluster))+ 
+  dat1$cluster=as.factor(kme$cluster)
+  ef <- list()
+  for(i in 1:(length(names(dat1))-2)){
+    ef[[i]] <- dat1 %>% 
+      ggplot(aes(x = !!sym(names(dat1)[i]), y = SMR, color = cluster)) +
+      geom_point(alpha = 0.4)+
+      geom_smooth(span = 0.9)+ 
+      theme_bw()
+  }
+  
+  pair <- ggpairs(dat1, mapping=aes(color=cluster))+ 
     theme_bw()
   
   pair1 <- ggpairs(dat1, columns = 1:4, 
-                        aes(color=Cluster, alpha=0.4), 
+                        aes(color=cluster, alpha=0.4), 
                         title="Scatterplot Matrix",
                         upper=list(continuous="density", combo="box"),
                         lower=list(continuous="smooth", combo="dot")) +
     theme_light() +
     theme(plot.title=element_text(size=10))+ 
     theme_bw()
-  
+
+  return(list(ef, pair, pair1))
+}
+# fn_tot_plt(regrs, dat, "SMR_s")
+
+fn_lm_plt <- function(var, SMR, dat, regrs){
+  set.seed(5099)
+  kme <- kmeans(dat,center=3)
   c_reg <- regrs
   c_reg$cluster <- as.factor(kme$cluster)
   
@@ -240,13 +255,6 @@ fn_tot_plt <- function(regrs, dat, SMR){
     ggtitle("Installation pattern per cluster")+ 
     theme_bw()
   
-  all_plt = list(pair, pair1, clu)
-  return(all_plt)
-}
-  
-# fn_tot_plt(regrs, dat, "SMR_s")
-
-fn_lm_plt <- function(var, SMR){
   ef <- list()
   for(i in seq_along(var)){
     ef[[i]] <- c_reg %>% 
@@ -255,11 +263,11 @@ fn_lm_plt <- function(var, SMR){
       geom_smooth(span = 0.9)+ 
       theme_bw()
   }
-  return(ef)
+  return(list(clu, ef))
 }
 
-var_s <- c("hu_own", "hu_med_val")
-# fn_lm_plt(var_glm, "SMR_s")
+var_s <- c("single_unit", "hu_med_val", "hu_ex_1000")
+# fn_lm_plt(var_s, "SMR_s", dat, regrs)
 
 
 ##### EV
@@ -275,20 +283,24 @@ fa_glme_re <- glm(regrs[["n_e"]] ~ offset(log(regrs[["EV_E"]])) + dat[,1] +
 
 ## Plots
 # fn_tot_plt(regrs, dat, "SMR_e")
-var_e <- c("hu_own", "hu_med_val","hh_med_income", "hh_gini_index")
-# fn_lm_plt(var_e, "SMR_e")
+var_e <- c("single_unit","hh_med_income", "hh_gini_index")
+# fn_lm_plt(var_e, "SMR_e", dat, regrs)
 
 ## Regrsession 
-# rege <- glm(n_e ~ hu_own + hu_med_val + hh_med_income + hh_gini_index + offset(log(EV_E)),
-#            data= regrs[-c(1,2,15)], family= "poisson")
+# names(regrs)
+# rege <- lm(SMR_e ~ hu + hu_own + single_unit+hu_blt1979+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+lihtc+high_income, data= regrs)
+# MASS::stepAIC(rege)
+# rege <- lm(SMR_e ~ single_unit + hh_med_income + hh_gini_index, data = regrs)
+rege <- glm(n_e ~ single_unit + hh_med_income + hh_gini_index + offset(log(EV_E)),
+            data= regrs[-c(1,2,15)], family= "poisson")
 # summary(rege)
 
-va_glme_re <- glm(n_e ~ hu_own + hu_med_val + hh_med_income + hh_gini_index + 
-                    offset(log(EV_E)), data= regrs[-c(1,2,15)], family= "poisson") %>% 
+va_glme_re <- glm(n_e ~ single_unit + hh_med_income + hh_gini_index + offset(log(EV_E)),
+                  data= regrs[-c(1,2,15)], family= "poisson") %>% 
   tab_model()
 
 
-save(regrs, regrs_p, c_reg, fct, fa, dat, kme, g_perf_re, fa_lm_re, fa_glm_re, va_glm_re,
+save(regrs, regrs_p, fct, fa, dat, kme, g_perf_re, fa_lm_re, fa_glm_re, va_glm_re,
      va_glme_re, fa_lme_re, fa_glme_re, fn_fa_plt, fn_tot_plt, fn_lm_plt, var_e, var_s,
      file = "./data/derived/reg.Rdata")
 

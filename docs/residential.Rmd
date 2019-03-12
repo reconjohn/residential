@@ -108,7 +108,7 @@ seattle %>%
 
 ## Histograms of multiple variables
 
-> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `American Community Survey (ACS) 2011 - 2015`, and `City of Seattle open data portal`.
+> Variables are collected through several datasets including `National Renewable Energy Laboratory (NREL) REPLICA 2018`, `[American Community Survey (ACS) 2011 - 2015](https://factfinder.census.gov/faces/nav/jsf/pages/download_center.xhtml)`, and `City of Seattle open data portal`.
 
 ```{r, fig.height=5}
 source("../syntax/dv_table.R")
@@ -116,18 +116,21 @@ source("../syntax/dv_table.R")
 
 ## Cor plot
 
-> The number of solar installation per 100 housing units is the dependent variable (`solar`) per census track. Rest of variables are as follows.
+> The number of solar installation in each census track is the dependent variable (`solar`). Rest of variables are as follows.
 
-> * `hu_own`: proportion of owner-occupied housing units
-> * `hu_no_mor`: proportion of owner-occupied housing units without a mortgage
-> * `hu_med_val`: normalized median value of owner-occupied housing units 
-> * `hu_ex_1000`: proportion of owner-occupied units with housing costs greater than $1000/month
-> * `hh_med_income`: normalized household median income
-> * `hh_gini_index`: household GINI Index of income inequality
-> * `hu_high_sf_own`: proportion of households of high income, single family and owning the house
-> * `ev`: electric vehicle charger installation per 100 housing units
+> * `hu_own`: the proportion of owner-occupied housing units
+> * `single_unit`: the proportion of single unit housings (single family houses)
+> * `hu_no_mor`: the proportion of owner-occupied housing units without a mortgage
+> * `hu_med_val`: the normalized median value of owner-occupied housing units 
+> * `hu_ex_1000`: the proportion of owner-occupied units with housing costs greater than $1000/month
+> * `hh_med_income`: the normalized household median income
+> * `hh_gini_index`: the household GINI Index of income inequality
+> * `high_income`: the proportion of high income households
+> * `SMR_s`: the ratio of solar installation to the expected number of installation in terms of the number of the residential housing units of the given census track. 
 
-> The dependent variable (`solar`) is correlated to all the variables except for the household GINI index and LITHC qualification.
+[Units in structure](https://www.census.gov/hhes/www/housing/census/historic/units.html)
+
+> The dependent variable (`solar`) is correlated to all the variables except for the variables of household GINI index and LITHC qualification.
 
 ```{r}
 ### cor plot

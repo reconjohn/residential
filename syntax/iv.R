@@ -16,10 +16,15 @@ data1 <- read_csv(file = "./data/raw/ACS_15_5YR_B25003.csv")[-1,] %>%
   mutate_all(funs(as.numeric))
 data2 <- read_csv(file = "./data/raw/neighbor.csv") %>% 
   select(geoid, L_HOOD)
-  
-str(data)
-head(data)
-View(data)
+data3 <- read_csv(file = "./data/raw/ACS_15_5YR_S1101.csv")[-1,] %>% 
+  rename(geoid = GEO.id2, single_unit = HC01_EST_VC27) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  mutate(single_unit = single_unit/ 100) %>% 
+  select(geoid, single_unit)
+
+# str(data)
+# head(data)
+# View(data)
 
 ## county
 county <- data %>% 
@@ -32,14 +37,16 @@ county <- data %>%
          hu_vintage_2010toafter, hu_vintage_2000to2009, hu_vintage_1980to1999,
          hu_vintage_1960to1970, hu_vintage_1940to1959, hu_vintage_1939toearlier,lihtc_qualified,
          -pct_eli_hh,-ends_with("elep_hh"))
-str(county)
-county$hh_med_income[is.na(county$hh_med_income)] = 7115
+
+county$hh_med_income[is.na(county$hh_med_income)] = mean(county$hh_med_income, na.rm= T)
+county$hu_med_val[is.na(county$hu_med_val)] = mean(county$hu_med_val, na.rm= T)
 
 ## Seattle 
 seattle <- county %>% 
-  filter(geoid >= 53033000100, geoid <= 53033012100, !is.na(hu_med_val)) %>% 
-  left_join(data1, by = "geoid")
-summary(seattle)
+  filter(geoid >= 53033000100, geoid <= 53033026500) %>% 
+  left_join(data1, by = "geoid") %>% 
+  left_join(data3, by = "geoid")
+# summary(seattle)
 
 seattle_simple <- seattle %>% 
   gather(char,val, very_low_mf_own_hh:high_sf_rent_mwh) %>% 
@@ -67,7 +74,7 @@ seattle_simple <- seattle %>%
          sep = ifelse(str_detect(char, "hh"), "hh", "mwh")) %>% 
   spread(sep, val) %>% 
   select(geoid, incomeclass, type, own, hh, hu, mwh, 
-         hu_own, hu_blt1979, hu_no_mor,hu_med_val, hu_ex_1000, 
+         hu_own, single_unit, hu_blt1979, hu_no_mor,hu_med_val, hu_ex_1000, 
          edu, wh_race, af_race, non_us, hh_med_income, hh_gini_index,lihtc) %>% 
   mutate_at(vars(type,own), funs(factor)) 
 
@@ -77,12 +84,21 @@ seattle_simple <- seattle_simple %>%
   inner_join(seattle_simple %>% 
                filter(!is.na(mwh)) %>% 
                select(-hh), by = c("geoid", "incomeclass", "type", "own")) %>% 
-  inner_join(data2, by = "geoid")
+  inner_join(data2, by = "geoid") 
 
-  
-View(seattle_simple)
-str(seattle_simple)
-summary(seattle_simple)
+high_income <- seattle_simple %>% 
+  group_by(geoid, incomeclass) %>% 
+  summarise(tot = sum(hh), hu = mean(hu)) %>% 
+  filter(incomeclass == "high") %>% 
+  mutate(high_income = tot/ hu) %>% 
+  select(geoid, high_income)
+
+seattle_simple <- seattle_simple %>% 
+  left_join(high_income, by = "geoid")
+
+# View(seattle_simple)
+# str(seattle_simple)
+# summary(seattle_simple)
 
 ## summary 
 wrk <- seattle_simple %>% 
@@ -144,7 +160,7 @@ regr <- seattle_simple %>%
   select(-incomeclass, -type, -own, -hh, -mwh) %>% 
   mutate(geoid = as.character(geoid))
 
-# glimpse(regr)
+# summary(regr)
 
 
 ## Plot
@@ -195,3 +211,6 @@ regr <- seattle_simple %>%
 save(county, seattle, seattle_simple, pot, regr, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
 
 load("./data/derived/iv.Rdata")
+
+
+  

@@ -56,6 +56,20 @@ g_ts_ts <- temp_spatial %>%
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
 
+
+temp_spatial %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year, geoid) %>% 
+  summarise(install = sum(count)) %>% 
+  ggplot(aes(x = year, y = install, group = geoid))+
+  geom_line(size = 1, alpha = 0.4)+
+  xlab("Year") + ylab("Cumulative number of installation") +
+  theme_bw() +
+  theme(legend.position = c(0.2, 0.7),
+        legend.background = element_rect(fill="transparent"))
+
+
 g_nb_ts <- temp_spatial %>% 
   group_by(L_HOOD, date) %>% 
   summarise(total = sum(count)) %>% 
@@ -83,6 +97,44 @@ g_nb_ts <- temp_spatial %>%
   theme(legend.position = c(0.5, 0.7),
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y")
+
+
+temp_spatial %>% 
+  group_by(L_HOOD, date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total)) %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  mutate(year = semester(date, with_year = T)) %>% 
+  group_by(year, L_HOOD) %>% 
+  summarise(install = sum(total)) %>% 
+  ggplot(aes(x = year, y = install, group = L_HOOD, color = L_HOOD))+
+  geom_line(size = 1, alpha = 0.7)+
+  scale_color_manual(name ="Impact of NW SEED (dotted line) on residential solar in Seattle", 
+                     values = c("red","brown","blue","gold4", 
+                                "dark green", "purple"))+
+  xlab("Year") + ylab("Cumulative number of installation") +
+  theme_bw() +
+  theme(legend.position = c(0.5, 0.7),
+        legend.background = element_rect(fill="transparent")) 
+
+
+temp_spatial %>% 
+  group_by(L_HOOD, date) %>% 
+  summarise(total = sum(count)) %>% 
+  mutate(sum = cumsum(total),
+         sum_df = c(0, diff(sum))) %>% 
+  filter(date > as.Date("01/01/2005", "%m/%d/%Y")) %>% 
+  ggplot(aes(x = date, y = sum_df, group = L_HOOD, color = L_HOOD))+
+  geom_point(size = 1, alpha = 0.7)+
+  scale_color_manual(name ="Impact of NW SEED (dotted line) on residential solar in Seattle", 
+                     values = c("red","brown","blue","gold4", 
+                                "dark green", "purple"))+
+  xlab("Year") + ylab("Cumulative number of installation") +
+  ylim(0, 20) +
+  theme_bw() +
+  theme(legend.position = c(0.5, 0.7),
+        legend.background = element_rect(fill="transparent")) 
+
 
 nb <- temp_spatial %>% 
   distinct(L_HOOD, geoid) %>% 
@@ -120,6 +172,9 @@ g_nbor_ts <- temp_spatial %>%
   theme(legend.position = c(0.1, 0.8),
         legend.background = element_rect(fill="transparent")) +
   scale_x_date(date_breaks = "1 year", date_labels = "%y")
+
+
+
 
 # time impact (6 months)
 # 30 vs. 29
