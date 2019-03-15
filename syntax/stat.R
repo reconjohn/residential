@@ -2,6 +2,8 @@
 #' title: "Statistical Methods for Spatial Data: Residential Solar in Seattle"
 #' author: "Yohan Min"
 #' output:
+#'   html_document:
+#'     keep_md: yes
 #'   pdf_document:
 #'     latex_engine: xelatex
 #' fontsize: 11pt

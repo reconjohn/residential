@@ -209,9 +209,14 @@ The previous analyses reveal that (1) residential solar installations are mostly
 
 The study results will support policy makers to develop a policy that better help underserved communities under limited resources (e.g., those who rent multi-family houses and have less finance to install solar systems) by leading to equitable incentive distribution and access to clean energy.
 
+
+# REFERENCE
+
+Caperton, Richard W., Mari Hern, and ez. “The Electrical Divide: New Energy Technologies and Avoiding an Electric Service Gap.” Center for American Progress. Accessed December 24, 2018. https://www.americanprogress.org/issues/green/reports/2013/07/15/69249/the-electrical-divide-new-energy-technologies-and-avoiding-an-electric-service-gap/.
+
 \pagebreak
 
-# Appendix
+# APPENDIX
 
 
 <div class="figure" style="text-align: center">
@@ -267,6 +272,10 @@ Table: Residuals of poission model with covariates (continued below)
 <img src="stat_files/figure-html/unnamed-chunk-25-1.png" alt="Residential solar density in Seattle"  />
 <p class="caption">Residential solar density in Seattle</p>
 </div>
+<div class="figure" style="text-align: center">
+<img src="stat_files/figure-html/unnamed-chunk-26-1.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-2.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-3.png" alt="Mapping of random effects and residuals"  />
+<p class="caption">Mapping of random effects and residuals</p>
+</div>
 
 -----------------------------------------------------------------------
  Test statistic   P value   Alternative hypothesis   Moran I statistic 
@@ -284,13 +293,14 @@ Table: GWR residual residuals (continued below)
 ------------------------
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-26-1.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-2.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-3.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-4.png" alt="Mapping of random effects and residuals"  />
-<p class="caption">Mapping of random effects and residuals</p>
+<img src="stat_files/figure-html/unnamed-chunk-27-1.png" alt="Plot of SMR vs. RR from INLA model"  />
+<p class="caption">Plot of SMR vs. RR from INLA model</p>
 </div>
+
 
 
 ---
 title: "stat.R"
 author: "Yohan_Min"
-date: "Fri Mar 15 10:08:34 2019"
+date: "Fri Mar 15 10:30:25 2019"
 ---
