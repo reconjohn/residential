@@ -93,13 +93,13 @@ fn_fa_plt <- function(SMR, dat){
   if (str_detect(deparse(substitute(SMR)), "SMR_s")){
     for(i in seq_along(dat)){
       plot(dat[,i], SMR, xlab = ML_ord[i], 
-           ylab = expression("Solar installation ("~Y[i]/E[i]~")"))
+           ylab = expression("Log of solar installation ("~log(Y[i]/E[i])~")"))
       abline(lm(SMR ~ dat[,i]), col = "red")
       }
     } else {
       for(i in seq_along(dat)){
         plot(dat[,i], SMR, xlab = ML_ord[i], 
-             ylab = expression("EV charger installation ("~Y[i]/E[i]~")"))
+             ylab = expression("Log of EV charger installation ("~log(Y[i]/E[i])~")"))
         abline(lm(SMR ~ dat[,i]), col = "red")
     }
   }

@@ -91,26 +91,25 @@ spplot(seattle, "SMR_s", col.regions=coul, main="SMR")
 #' \end{aligned} 
 #' $$
 #' 
-
-seattle@data$ID <- 1:dim(seattle@data)[1]
-seattle@data$ID2 <- 1:dim(seattle@data)[1]
-lognorm_sp <- inla(n_s ~ 1 + I(single_unit) + I(hu_med_val) + I(hu_ex_1000) +
-                     f(ID, model="iid") +
-                     f(ID2, model="besag",graph="../data/raw/seattle.graph"), data=seattle@data,
-                   family="poisson",E=solar_E, control.predictor=list(compute=TRUE))
-
+# 
+# seattle@data$ID <- 1:dim(seattle@data)[1]
+# seattle@data$ID2 <- 1:dim(seattle@data)[1]
+# lognorm_sp <- inla(n_s ~ 1 + I(single_unit) + I(hu_med_val) + I(hu_ex_1000) +
+#                      f(ID, model="iid") +
+#                      f(ID2, model="besag",graph="../data/raw/seattle.graph"), data=seattle@data,
+#                    family="poisson",E=solar_E, control.predictor=list(compute=TRUE))
 # summary(lognorm_sp)
 # lognorm_sp$summary.random 
 # lognorm_sp$summary.linear.predictor
-
-beta = lognorm_sp$summary.fixed[c(1, 3:5)]
-sigma_sp <- 1/sqrt(lognorm_sp$summary.hyperpar)[, -c(2,6)]
-rownames(sigma_sp) = c("SD for IID", "SD for spatial")
-rbind(beta, sigma_sp) %>% pander()
+# 
+# beta = lognorm_sp$summary.fixed[c(1, 3:5)]
+# sigma_sp <- 1/sqrt(lognorm_sp$summary.hyperpar)[, -c(2,6)]
+# rownames(sigma_sp) = c("SD for IID", "SD for spatial")
+# rbind(beta, sigma_sp) %>% pander()
 
 #' 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.3. 
 
-lgnorm_sp <- inla(n_s ~ 1 + I(single_unit) + I(hu_med_val) + I(hu_ex_1000) +
+lgnorm_sp <- inla(n_s ~ 1 + I(single_unit) + I(hu_med_val) + I(hu_ex_1000) + I(hu_own) + I(hu_no_mor) + I(hh_med_income) + I(hh_gini_index) + I(high_income) +
                     f(ID, model="bym2", graph="../data/raw/seattle.graph", scale.model=T, constr=T,
                       hyper=list(phi=list(prior="pc", param=c(0.5, 0.5), initial=1),
                                  prec=list(prior="pc.prec", param=c(0.3,0.01), initial=5))),
@@ -127,8 +126,8 @@ phi1 = lgnorm_sp$summary.hyperpar[2, -c(2,6)]
 rbind(beta1, sigma_sp1, phi1) %>% pander()
 
 #' * `r exp(beta1[2,3]*0.5)` - 50% increase in the percentage in single unit may incur the amount increase in solar installation. 
-#' * `r exp(beta[3,3]*0.5)` - 50% increase in the percentage in house unit median value may incur the amount increase in solar installation. 
-#' * `r exp(beta[4,3]*0.5)` - 50% increase in the percentage in homeownership with more than $1,000 expenditure may incur the amount increase in solar installation. 
+#' * `r exp(beta1[3,3]*0.5)` - 50% increase in the percentage in house unit median value may incur the amount increase in solar installation. 
+#' * `r exp(beta1[4,3]*0.5)` - 50% increase in the percentage in homeownership with more than $1,000 expenditure may incur the amount increase in solar installation. 
 #'
 #' ## (b) Relative risk estimates and comparison
 
@@ -337,6 +336,32 @@ dat <- as.data.frame(fa$scores)
 
 fn_fa_plt(seattle@data[["SMR_s"]], dat)
 
+seattle@data <- cbind(seattle@data, dat)
+
+#' 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.3. 
+
+fa_sp <- inla(n_s ~ 1 + I(ML1) + I(ML2) + I(ML3) +
+                    f(ID, model="bym2", graph="../data/raw/seattle.graph", scale.model=T, constr=T,
+                      hyper=list(phi=list(prior="pc", param=c(0.5, 0.5), initial=1),
+                                 prec=list(prior="pc.prec", param=c(0.3,0.01), initial=5))),
+                  data=seattle@data, family="poisson", E=solar_E, control.predictor=list(compute=TRUE))
+# summary(fa_sp)
+# fa_sp$summary.random 
+# fa_sp$summary.linear.predictor
+
+beta2 = fa_sp$summary.fixed[c(1, 3:5)]
+sigma_sp2 <- 1/sqrt(fa_sp$summary.hyperpar)[1, -c(2,6)]
+rownames(sigma_sp2) = "Total SD"
+phi2 = fa_sp$summary.hyperpar[2, -c(2,6)] 
+#' ## BYM2 Model
+rbind(beta2, sigma_sp2, phi2) %>% pander()
+
+#' * `r exp(beta2[2,3]*0.5)` - 50% increase in the percentage in single family homeonw factor may incur the amount increase in solar installation. 
+#' * `r exp(beta2[3,3]*0.5)` - 50% increase in the percentage in economic status may incur the amount increase in solar installation. 
+#' * `r exp(beta2[4,3]*0.5)` - 50% increase in the percentage in the area inequality may incur the amount increase in solar installation.
+#' 
+#' 
+
 #' ### regression 
 
 falm <- lm(seattle@data[["SMR_s"]] ~ dat[,1] + dat[,2])
@@ -365,7 +390,8 @@ g_perf_re
 #' ### regression 
 lm(regrs[["SMR_s"]] ~ single_unit + hu_med_val + hu_ex_1000, data= regrs) %>% tidy() %>% pander()
 
-glm(n_s ~ single_unit + hu_med_val + hu_ex_1000 + offset(log(solar_E)), data= regrs, family= "poisson") %>% pander()
+min <- glm(n_s ~ single_unit + hu_med_val + hu_no_mor + offset(log(solar_E)), data= regrs, family= "poisson") 
+summary(min)
 
 # View(seattle@data)
 seattle@data$clu <- as.factor(kme$cluster)
