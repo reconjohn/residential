@@ -2,10 +2,6 @@
 #' title: "Statistical Methods for Spatial Data: Residential Solar in Seattle"
 #' author: "Yohan Min"
 #' output:
-#'   html_document:
-#'     keep_md: yes
-#'   pdf_document:
-#'     latex_engine: xelatex
 #' fontsize: 11pt
 #' header-includes:
 #'   - \usepackage{fontspec}
@@ -50,11 +46,12 @@ library(lattice)
 library(png)
 library(grid)
 library(gridExtra)
+library(colorRamps)
 
-load("../data/derived/reg.Rdata")
 load("../data/derived/dv.Rdata")
-load("../data/derived/inla.Rdata")
+load("../data/derived/reg.Rdata")
 # View(regrs)
+# View(totelec)
 
 seattle <- readOGR(dsn = "../data/raw", layer= "2010_US_Census_Tracts")
 # plot(seattle)
@@ -70,45 +67,74 @@ seattle@data <- seattle@data %>%
 
 #' # 1. INTRODUCTION
 #'
-#' Residential solar installations have rapidly increased in recent years with advancement of clean energy policies and associated incentives such as tax credits. This transition to the new energy system could lead to a undesirable effects on some communities. Committed leadership to implement a new policy in regard to the transition is required to avoid the uneven distribution of the service as shown in the case of telecommunication (Caperton et al. 2013). While numerous studies have been performed on various aspects of the policies designed to support solar installations, there is still a dearth of studies aimed at investigating the impact of such policies on the social equity. Two unanswered questions have emerged: (1) were there certain communities inadvertently left out from incentive opportunities? and (2) do those current policies help the social equity?
+#' Residential solar installations have rapidly increased in recent years with advancement of clean energy policies and associated incentives such as tax credits. This transition to the new energy system could lead to undesirable effects on some communities as shown in the case of telecommunication (Caperton et al. 2013). Committed leadership to implement a new policy in regard to the transition is required to avoid the uneven distribution of the service. While numerous studies have been performed on various aspects of the policies designed to support solar installations, there is still a dearth of studies aimed at investigating the impact of such policies on the social equity. Two unanswered questions have emerged: (1) were there certain communities inadvertently left out from incentive opportunities? and (2) do those current policies help the social equity?
 #'
 #' To answer these questions, the present study performs a spatial analysis of the distribution of solar panel installed-buildings (residential solar hereafter) in terms of housing and socioeconomic characteristics based on census track in Seattle. In particular, this study aims to explore any patterns of residential (single family and multifamily) solar installations by examining spatial clustering patterns, associations among variables through several data sources.
 #'
 #' # 2. DATA DESCRIPTION
 #'
-#' City of Seattle open data portal keeps the records of electrical permits and this study focuses on the data that were issued between 2003 and 2018 in Seattle, WA. Electrical permits are required to have when residential houses want to install solar systems on their house properties. Intensive data mining techniques made it possible to identify residential solar installation permits among the data sets. The data includes geographical coordinates (latitude and longitude), completion of installation dates of the solar system, and solar contractor who installed the system. Mapping the points of residential solar in the region can verify a certain pattern in installation. Residential housing units can be assumed to be evenly present across the region for the purpose of exploratory data analysis although they are not equally distributed. The density of point data of residential solar and its related `G estimate` show a clustered pattern across census track.
+#' City of Seattle open data portal keeps the records of electrical permits and this study focuses on the data that were issued between 2003 and 2018 in Seattle, WA. Electrical permits are required when residential houses want to install solar systems on their house properties. Intensive data mining techniques made it possible to identify residential solar installation permits among the data sets. The data includes geographical coordinates (latitude and longitude), completion of installation dates of the solar system, and solar contractor who installed the system. Mapping the points of residential solar in the region can verify a certain pattern in installation. Residential housing units can be assumed to be evenly present across the region for the purpose of exploratory data analysis although they are not equally distributed. The density of point data of residential solar and its related `G estimate` show a clustered pattern.
 #'
 so <- as.data.frame(install[,c(4,3)])
 # plot(so,pch = 4, cex = 0.6)
 solar <- as.ppp(so, W= owin(c(-122.45, -122.20), c(47.49, 47.74)))
 # plot(solar)
 
+tot <- as.data.frame(totelec[,c(6,5)])
+# plot(tot,pch = 4, cex = 0.6)
+total <- as.ppp(tot, W= owin(c(-122.45, -122.20), c(47.49, 47.74)))
+# plot(total) 
+
 #+ echo= F, include=F, warning=F, message=F
 evn <- envelope(solar, fun= Gest, nrank= 2, nsim= 99)
 
-#+ echo= F, warning=F, message=F, fig.cap = "G estimate for spatial dependency", fig.height= 3
+#+ echo= F, warning=F, message=F, fig.cap = "G estimate for spatial dependency of solar installations", fig.height= 3
 plot(evn, main="", legend= F, xlab= "Distance(d)", ylab= "G(d)")
+coul = colorRampPalette(rev(brewer.pal(11, "RdBu")))(18)
+uni = colorRampPalette(brewer.pal(9, "YlOrBr"))(30)
+like = matlab.like2
+#' ![Density plot of residential solar installations in Seattle](3d.png){width=500px}
+#' 
+den <- as(as(density(solar, 0.004), "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
+#+ echo= F, warning=F, message=F, fig.height=3.5, fig.cap= "Residential solar density in Seattle"
+# plot(den, col=blue2red(30))
+# title("Residential solar density in Seattle")
 
-#' ![Density plot of residential solar installation in Seattle](3d.png){width=500px}
+dento <- as(as(density(total, 0.004), "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
+#+ echo= F, warning=F, message=F, fig.height=3.5, fig.cap= "Residential housing density in Seattle"
+# plot(dento)
+# title("Residential housing density in Seattle")
 
 # scatterplot3d(cbind(den$s1, den$s2, den$v), color="red", pch="7", type = "l", xlab = "x", ylab = "y", zlab = "density")
-# plot3d(cbind(den$s1, den$s2, den$v), col = rainbow(7), type = "p", size= 1.5)
+# library(rgl)
+# library(raster)
+# plot3d(cbind(den$s1, den$s2, scaled_den), col = rainbow(7), type = "p", size= 1.5)
+# plot3d(cbind(dento$s1, dento$s2, scaled_dento), col = rainbow(7), type = "p", size= 1.5)
+
+# relative density
+scaled_den = (den$v - mean(den$v))/ sd(den$v)
+scaled_dento = (dento$v - mean(dento$v))/ sd(dento$v)
+den@data$v <- (scaled_den - scaled_dento) 
+plot(den, col=blue2red(30))
+title("Residential solar density in Seattle")
+# plot3d(cbind(den$s1, den$s2, den$v), col = rainbow(7), type = "l", size= 1.5)
+
 
 #' After the point data was aggregated to the related census track, the data was examined in terms of the socioeconomic and housing characteristics based on the American Community Survey of the census (2011 - 2015 ACS 5-Year estimates). The rate of the residential solar installation in each census track is the dependent variable (`SMR_s`) in this study. Rest of variables are as follows.
 #'
-#' * `hu_own`: the proportion of owner-occupied housing units
-#' * `single_unit`: the proportion of single unit housings (single family houses)
-#' * `hu_no_mor`: the proportion of owner-occupied housing units without a mortgage
-#' * `hu_med_val`: the normalized median value of owner-occupied housing units
-#' * `hu_ex_1000`: the proportion of owner-occupied units with housing costs greater than $1000/month
-#' * `hh_med_income`: the normalized household median income
-#' * `hh_gini_index`: the household GINI Index of income inequality
-#' * `high_income`: the proportion of high income households
+#' * `hu_own`: owner-occupied housing units
+#' * `single_unit`: single unit housings (single family houses)
+#' * `hu_no_mor`: owner-occupied housing units without a mortgage
+#' * `hu_med_val`: median value of owner-occupied housing units
+#' * `edu`: population above high school degree
+#' * `hh_med_income`: household median income
+#' * `hh_gini_index`: household GINI Index of income inequality
+#' * `high_income`: high income households
 #' * `SMR_s`: the ratio of solar installation to the expected number of installations in regard to the total number of the residential housing units of the given census track.
 #'
 #+ echo= F, warning=F, message=F, fig.cap = "Histograms of variables"
 par(mar=c(1.9,1.9,1,1))
-fhist <- regrs[, c(3,4,6,7,8,13,14,17,24)]
+fhist <- regrs[, c(1,2,4,5,7,11,12,13,19)]
 par(mfrow=c(3,3))
 for(i in 1:length(fhist)){
       hist(fhist[[i]], main= paste(names(fhist)[i]),
@@ -120,10 +146,6 @@ for(i in 1:length(fhist)){
 #' # 3. METHODS
 #'
 #' The expected rate of residential solar per each census track is estimated based on the total number of housing units in Seattle and its residential solar numbers. Here the term, Standardized Mortality Ratio (SMR) can be considered to be the rate of residential solar in a census track in this study. It is defined by the number of residential solar over the expected number of residential solar given the estimated proportion, which is the total number of residential solar over the total number of housing units in Seattle. SMR shows a pattern of clustering similar to the pattern of the previous point data of residential solar.
-#'
-#'
-coul = colorRampPalette(rev(brewer.pal(11, "RdBu")))(18)
-uni = colorRampPalette(brewer.pal(9, "YlOrBr"))(30)
 #'
 #' $$ SMR_i = \frac{Y_i}{E_i} $$
 #'
@@ -158,9 +180,8 @@ pop.upper.bound <- 0.2
 n.simulations <- 999
 alpha.level <- 0.05
 
-Kpoisson <- kulldorff(centroids,seattle@data$n_s,seattle@data$hu,
-                      expected.cases=seattle@data$solar_E,
-                      pop.upper.bound, n.simulations, alpha.level, plot=T)
+Kpoisson <- kulldorff(centroids,seattle@data$n_s, seattle@data$hu,
+                      expected.cases=NULL, pop.upper.bound, n.simulations, alpha.level, plot=T)
 Kcluster <- Kpoisson$most.likely.cluster$location.IDs.included
 
 plot(seattle, axes= T)
@@ -172,13 +193,13 @@ plot(seattle, axes = TRUE)
 plot(seattle[K2cluster,], add = TRUE, col = "red")
 title("Second Most Likely Cluster")
 #'
-#'Having verified that there is a spatial pattern of the residential solar rate, there might be related or shared factors in socioeconomic and housing characteristics in the same region. Housing, economy, social inequality variables show correlations pairwise in the figure below.
+#'Having verified that there is a spatial pattern in the residential solar rate, there might be related or shared factors in socioeconomic and housing characteristics in the same region. Housing, economy, social inequality variables show correlations pairwise in the figure below.
 #'
 #+ echo= F, warning=F, message=F, fig.cap= "Covariates correlation plot", fig.height= 4
 par(mfrow= c(1,1))
 corrplot(cor(regrs_p), method = "ellipse")
 #'
-#' Dimension reduction of covariates will be performed by factor analysis in consideration of avoiding multicollinearity. The newly generated factors will fit models to estimate the residential solar rate. Residuals will be checked afterwards to see if there is still a clustering pattern, which indicates that the model can't address the spatial dependency. Furthermore, a few variables which represent each factor the most, will be chosen for the model fit compared to the factors from dimension reduction. It is because factors could possibly keep overall noises by including unnecessary covariates, which are less related to the residential solar rate. Poisson lognormal spatial model, spatially using `BYM2` method, will be tested to address the residual clustering issue in addition to `K-means` clustering analysis, which identifies similar regions in terms of socioeconomic and housing patterns of census tracks. Note that `K-means` clustering will not take into account of the residential solar rate for defining the Euclidean distance among data points in order for the categorized census tracks to be compared with the residential solar rate pattern to figure out the relationship between the covariates and residential solar rate. Finally Geographically Weighted Regression (GWR) will address the local variation of coefficients of covariates by taking into account of the local spatial dependency.
+#' Dimension reduction of covariates will be performed by factor analysis in consideration of avoiding multicollinearity. The newly generated factors will fit models to estimate the residential solar rate. Residuals will be checked afterwards to see if there is still a clustering pattern, which indicates that the model can't address the spatial dependency. Furthermore, a few variables which represent each factor the most, will be chosen for the model fit compared to the factors from dimension reduction. It is because factors could possibly keep overall noises by including unnecessary covariates, which are less related to the residential solar rate. Poisson lognormal spatial model, specially using `BYM2` method, will be tested to address the residual clustering issue in addition to `K-means` clustering analysis, which identifies similar regions in terms of socioeconomic and housing patterns of census tracks. Note that `K-means` clustering will not take into account of the residential solar rate for defining the Euclidean distance among data points in order for the categorized census tracks to be compared with the residential solar rate pattern to figure out the relationship between the covariates and residential solar rate. Finally Geographically Weighted Regression (GWR) will address the local variation of coefficients of covariates by taking into account of the local spatial dependency.
 #'
 #' # 4. RESULTS
 #'
@@ -188,7 +209,8 @@ corrplot(cor(regrs_p), method = "ellipse")
 #'
 #'
 fct <- seattle@data %>%
-  dplyr::select(single_unit, hu_own, hu_no_mor, hu_med_val, high_income, hh_med_income, hh_gini_index)
+  dplyr::select(single_unit, hu_own, hu_no_mor, edu, hu_med_val, 
+                high_income, hh_med_income, hh_gini_index)
 fa <- fa(fct,nfactors=3,rotate="promax",fm="ml")
 
 #+ echo= F, warning=F, message=F, fig.cap= "Factor diagram", fig.height= 2
@@ -208,49 +230,77 @@ for(i in seq_along(dat)){
 seattle@data <- cbind(seattle@data, dat)
 faglm <- glm(n_s ~ ML1 + ML2 + offset(log(solar_E)), data= seattle, family= "poisson")
 faglm %>% pander()
-
-xglm <- glm(n_s ~ single_unit + hu_med_val + offset(log(solar_E)), data= seattle, family= "poisson")
-glmres <- residuals(xglm, "pearson")
+glmres <- residuals(faglm, "pearson")
 seattle@data$glmres <- glmres
 
+# xglm <- glm(n_s ~ single_unit + hu_med_val + offset(log(solar_E)), data= seattle, family= "poisson")
 #'
 #' ## 4.2. Integrated Nested Laplace Approximations (INLA) model
 #'
-#' It is obvious that the variables can be divided into three categories: (1) housing stability, mostly the proportion of owner occupied single family houses, (2) economic status such as income level and house value, and (3) income inequality. Solar installation rate seems to be mainly correlated to the housing stability and economic status in this data. A few selected covariates could fit a model better than factors due to the fact that factors include all the unrelated covariates to the depedent variable (residential solar rate) in this study. The most representing covariates are single family house proportion (housing stability) and house median value (economic status) and selected for the further analyses. It is verified that the same generalized loglinear model fits better with the two covariates than factors.
+#' It is obvious that the variables can be divided into three categories: (1) housing stability, mostly the proportion of owner occupied single family houses, (2) economic status such as income level and house value, and (3) income inequality. Solar installation rate seems to be mainly correlated to the housing stability and economic status in this data. A few selected covariates could fit a model better than factors due to the fact that factors include all the unrelated covariates to the dependent variable (residential solar rate) in this study. The most representing covariates are single family house proportion (housing stability) and house median value (economic status) and selected for the further analyses. It is verified that the same generalized loglinear model fits better with the two covariates than factors.
+#' 
+#' $$
+#' \begin{aligned}
+#' Y_i |\beta_{0},\beta_{1},\beta_{2},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}I_{1i}+\beta_{2}I_{2i}} \mbox{e}^{S_i + \epsilon_i}),\\ 
+#' \epsilon_i | \sigma_\epsilon^{2} & \sim_{iid} \mbox{N}(0,\sigma_\epsilon^{2}),\\ 
+#' S_1,...,S_n | \sigma_s^{2} & \sim ~~~ \mbox{ICAR}(\sigma_s^{2}). 
+#' \end{aligned} 
+#' $$
 #'
-#' Integrated Nested Laplace Approximations (INLA) model takes into account of spatial dependencies and lognormal independent variance across census tracks. This model was set with priors such that 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.3. The result of the model fit confirms that the large variance is due to the spatial factor with $\phi$ of 0.96 in median.
+#' Integrated Nested Laplace Approximations (INLA) model takes into account of spatial dependencies and lognormal independent variance across census tracks. This model was set with priors such that 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.9. The result of the model fit confirms that the large variance is due to the spatial factor with $\phi$ of 0.96 in median.
 
 seattle@data$ID <- 1:dim(seattle@data)[1]
-x_inla <- inla(n_s ~ 1 + I(single_unit) + I(hu_med_val) +
+x_inla <- inla(n_s ~ 1 + I(ML1) + I(ML2) +
                  f(ID, model="bym2", graph="../data/raw/seattle.graph", scale.model=T, constr=T,
-                   hyper=list(phi=list(prior="pc", param=c(0.5, 0.5), initial=1),
-                              prec=list(prior="pc.prec", param=c(0.3,0.01), initial=5))),
+                   hyper=list(phi=list(prior="pc", param=c(0.5,0.5), initial=1),
+                              prec=list(prior="pc.prec", param=c(0.9,0.01), initial=5))),
                data=seattle@data, family="poisson", E=solar_E, control.predictor=list(compute=TRUE))
 # summary(x_inla)
-# x_inla$summary.random
-# x_inla$summary.linear.predictor
+# x_inla$summary.random # random effect in order of total and spatial 
+# x_inla$summary.linear.predictor # RR 
+
+# liner predictor to check if it is b0 + b1ML1 + b2ML2
+# mm = -0.3031 + seattle@data$ML1 * 0.5549 + seattle@data$ML2 * 0.182 
+# mn = x_inla$summary.linear.predictor[4][,1] - x_inla$summary.random$ID[1:135, 5]
+# plot(mm, mn)
+# abline(0, 1, col="red")
 
 beta = x_inla$summary.fixed[c(1, 3:5)]
 sigma_sp <- 1/sqrt(x_inla$summary.hyperpar)[1, -c(2,6)]
-rownames(sigma_sp) = "Total SD"
+rownames(sigma_sp) = "Total residual sd"
 phi = x_inla$summary.hyperpar[2, -c(2,6)]
 
-rbind(beta, sigma_sp, phi) %>% pander("Fitting INLA model: n_s ~ offset(log(solar_E)) + single_unit + hu_med_val")
+rbind(beta, sigma_sp, phi) %>% pander("Fitting INLA model: n_s ~ offset(log(solar_E)) + ML1 + ML2")
 
-#' This model says that 30% increase in the percentage in single family housing proportion may incur `r round(exp(beta[2,3]*0.3),2)` times increase in solar installation. Furthermore, 30% increase in the percentage in economic status may incur `r round(exp(beta[3,3]*0.3),2)` times increase in solar installation. Even though this model considers the spatial dependency, the residuals for the model show a clustering pattern after eliminating the covariate terms from the fitted values.
+#' Even though this model considers the spatial dependency, the residuals for the model show a clustering pattern after eliminating the covariate terms from the fitted values.
 #'
-Diff <- x_inla$summary.random$ID[1:135, 2] - x_inla$summary.random$ID[136:270, 2]
-REsnonspat <- exp(Diff)
-REsspat <- exp(x_inla$summary.random$ID[136:270, 5])
-seattle@data$REsnonspat <- REsnonspat
-seattle@data$REsspat <- REsspat
+# (REtotal - REspatial)
+
+seattle@data$REsnonspat <- 
+  exp(x_inla$summary.random$ID[1:135, 2] - x_inla$summary.random$ID[136:270, 2])
+
+seattle@data$REsspat <- exp(x_inla$summary.random$ID[136:270, 5])
 seattle@data$REstot <- exp(x_inla$summary.random$ID[1:135, 5])
 
 seattle@data$x_inla <-
-  exp(x_inla$summary.linear.predictor[4][,1] - x_inla$summary.random$ID[1:135, 5])
+  exp(x_inla$summary.linear.predictor[4][,1] - x_inla$summary.random$ID[1:135, 5]) # predictor RR
 
 seattle@data$RR_inla <-
-  exp(x_inla$summary.linear.predictor[4][,1])
+  exp(x_inla$summary.linear.predictor[4][,1]) # RR
+
+## before exp()
+seattle@data$REsnonspat_ <- 
+  x_inla$summary.random$ID[1:135, 2] - x_inla$summary.random$ID[136:270, 2]
+
+seattle@data$REsspat_ <- x_inla$summary.random$ID[136:270, 5]
+seattle@data$REstot_ <- x_inla$summary.random$ID[1:135, 5]
+
+seattle@data$x_inla_ <-
+  x_inla$summary.linear.predictor[4][,1] - x_inla$summary.random$ID[1:135, 5] # predictor RR
+
+seattle@data$RR_inla_ <-
+  x_inla$summary.linear.predictor[4][,1] # RR
+
 #'
 #' ## 4.3. K-means clustering analysis
 #'
@@ -258,14 +308,12 @@ seattle@data$RR_inla <-
 #'
 par(mfrow= c(1,1))
 set.seed(5099)
-dat1 <- seattle@data %>%
-  dplyr::select(single_unit, hu_med_val)
-kme <- kmeans(dat1, center=3)
-dat1$lg_SMR <- log(seattle@data$SMR_s)
-dat1$clu <- as.factor(kme$cluster)
+kme <- kmeans(dat, center=3)
+dat$lg_SMR <- log(seattle@data$SMR_s)
+dat$clu <- as.factor(kme$cluster)
 
 #+ echo= F, warning=F, message=F, fig.cap= "Covariate distributions with clustering"
-ggpairs(dat1, mapping=aes(color=clu))+
+ggpairs(dat, mapping=aes(color=clu))+
   theme_bw()
 
 # View(seattle@data)
@@ -274,13 +322,18 @@ seattle@data$clu <- as.factor(kme$cluster)
 #' ## 4.4. Geographically Weighted Regression
 #'
 #' Geographically Weighted Regression (GWR) model finally confirms that the residuals of the model have less chance of spatial dependency with respect to the insignificant `p-value` of Moran's I in 0.05 significance level. This model has even higher `R-squared` value compared to the previous models. GWR model entails consideration of spatial dependence in a local level by changing the coefficient values of covariates without involvement of explicit spatial term to the model. Below figures show the variance of coefficient values across the census tracks. The intensity of each map of covariates indicates the sensitivity of the concerned covariate in terms of the rate of residential solar. Single family house rate impacts more on the central Seattle area while North and South Seattle are more sensitive to the house median value with respect to solar panel installation on the residential houses.
-#'
+#' 
+#' $$
+#' \begin{aligned}
+#' Y(s) = E(s)\mbox{e}^{(\beta_{0}+\beta_{1}(s)X_1(s)+\beta_{2}(s)X_2(s)+\epsilon(s))}
+#' \end{aligned} 
+#' $$
 #+ echo= F, include=F, warning=F, message=F
 seattle@data$n_s[seattle@data$n_s == 0.5] <- 1 # function error: for approximation
-bw.ans <- bw.ggwr(n_s ~ single_unit + hu_med_val + offset(log(solar_E)), data= seattle, family= "poisson", approach= "CV", kernel= "bisquare")
+bw.ans <- bw.ggwr(n_s ~ ML1 + ML2 + offset(log(solar_E)), data= seattle, family= "poisson", approach= "CV", kernel= "bisquare")
 
 #+ echo= F, include=F, warning=F, message=F
-gwr.res <- ggwr.basic(n_s ~ single_unit + hu_med_val + offset(log(solar_E)), data= seattle, bw= bw.ans, family= "poisson", kernel= "bisquare")
+gwr.res <- ggwr.basic(n_s ~ ML1 + ML2 + offset(log(solar_E)), data= seattle, bw= bw.ans, family= "poisson", kernel= "bisquare")
 
 #+ echo= F, warning=F, message=F
 # gwr.res
@@ -288,25 +341,25 @@ seattle@data$gwr <- gwr.res$SDF$residual
 
 #+ echo= F, warning=F, message=F, fig.cap= "Clustering and GWR residuals", fig.height= 2.5
 c1 <- spplot(seattle, "clu", col.regions = c('indianred2', 'limegreen', 'dodgerblue2'), main="Cluster")
-c2 <- spplot(seattle, "gwr", col.regions = coul, main="GWR residuals with covariates\n (0.086 P value of Moran's I)")
+c2 <- spplot(seattle, "gwr", col.regions = coul, main="GWR residuals")
 grid.arrange(c1, c2, ncol = 2)
 
 #+ echo= F, warning=F, message=F, fig.cap= 'Coefficient variation of covariates', fig.height=2.5
 par(mfrow= c(1,2))
-hist(gwr.res$SDF$single_unit, main= "Single family", xlab= "")
-abline(v= xglm$coef[2], col= "red")
+hist(gwr.res$SDF$ML1, main= "ML1", xlab= "")
+abline(v= faglm$coef[2], col= "red")
 
-hist(gwr.res$SDF$hu_med_val, main= "Home median value", xlab= "")
-abline(v= xglm$coef[3], col= "red")
+hist(gwr.res$SDF$ML2, main= "ML2", xlab= "")
+abline(v= faglm$coef[3], col= "red")
 
 #+ echo= F, warning=F, message=F, fig.cap= 'GWR different impact of covariates in Seattle'
-s1 <- spplot(gwr.res$SDF, "single_unit", col.regions = coul,
-             at=as.numeric(quantile(gwr.res$SDF$single_unit,probs=seq(0,10,1)/10)),
-             main="Single family sensitivity")
+s1 <- spplot(gwr.res$SDF, "ML1", col.regions = coul,
+             at=as.numeric(quantile(gwr.res$SDF$ML1,probs=seq(0,10,1)/10)),
+             main="ML1 sensitivity")
 
-s2 <- spplot(gwr.res$SDF, "hu_med_val", col.regions = coul,
-             at=as.numeric(quantile(gwr.res$SDF$hu_med_val,probs=seq(0,10,1)/10)),
-             main="House median value sensitivity")
+s2 <- spplot(gwr.res$SDF, "ML2", col.regions = coul,
+             at=as.numeric(quantile(gwr.res$SDF$ML2,probs=seq(0,10,1)/10)),
+             main="ML2 sensitivity")
 grid.arrange(s1, s2, ncol = 2)
 #'
 #'
@@ -329,14 +382,7 @@ grid.arrange(s1, s2, ncol = 2)
 par(mfrow=c(1,1))
 factor.plot(fa, labels=rownames(fa$loadings))
 
-den <- as(as(density(solar, 0.004), "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
-#+ echo= F, warning=F, message=F, fig.height=3.5, fig.cap= "Residential solar density in Seattle"
-plot(den)
-title("residential solar density in Seattle")
-
 moran.test(poisres, col.w)  %>% pander("Residuals of poisson model without covariates")
-
-xglm %>% pander()
 
 moran.test(glmres, col.w) %>% pander("Residuals of poission model with covariates")
 
@@ -352,10 +398,18 @@ grid.arrange(m1, m2, ncol = 2)
 grid.arrange(m3, m4, ncol = 2)
 grid.arrange(m5, m6, ncol = 2)
 
+# before exp()
+m1_ <- spplot(seattle, "REsnonspat_", col.regions = coul, main="Non-spatial random \n effects (BYM2)")
+m2_ <- spplot(seattle, "REsspat_", col.regions = coul, main="Spatial random effects (BYM2)")
+m3_ <- spplot(seattle, "REstot_", col.regions = coul, main="Total random effects (BYM2)")
+m4_ <- spplot(seattle, "x_inla_", col.regions = coul, main="Covariate RRs (BYM2)")
+m5_ <- spplot(seattle, "RR_inla_", col.regions = coul, main="Lognormal-Spatial RRs (BYM2)")
+grid.arrange(m1_, m2_, ncol = 2)
+grid.arrange(m3_, m4_, ncol = 2)
+
 #+ echo= F, warning=F, message=F, fig.height=3, fig.cap= "Plot of SMR vs. RR from INLA model"
 plot(seattle@data$SMR_s, seattle@data$RR_inla, xlab="SMRs", ylab="Lognormal-Spatial RRs")
 abline(0, 1, col="red")
 
 moran.test(gwr.res$SDF@data$residual, col.w) %>% pander("GWR residual residuals")
-
 #'

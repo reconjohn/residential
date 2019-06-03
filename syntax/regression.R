@@ -39,7 +39,8 @@ N = sum(regr$hu) # total number of hh in Seattle
 P = sum(po$n_s, na.rm = T)/ N # total number of solar/ N
 Pe = sum(poe$n_e, na.rm = T)/ N # total number of EV/ N
 
-regrs <- regr %>% 
+
+regrs <- regr_scale %>% 
   left_join(po, by = "geoid") %>% 
   left_join(poe, by = "geoid") %>%
   mutate(n_s = ifelse(is.na(n_s), 0.5, n_s),
@@ -52,13 +53,14 @@ regrs <- regr %>%
          se_SMR_e = sqrt(SMR_e/ EV_E))
 
 # View(regrs)
+# summary(regrs)
 plot(regrs$se_SMR_s, regrs$SMR_s)
 plot(regrs$se_SMR_e, regrs$SMR_e)
 
 ## cor plot
 regrs_p <- regrs %>% 
-  select(-geoid, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -non_us, 
-         -hu_no_mor, -hu_blt1979, - hu_mwh, -edu, -wh_race, -af_race, -hu, -hh_high_sf_own, 
+  select(-geoid, -solar_E, -EV_E, -non_us, 
+         -hu_blt1979, -wh_race, -af_race, -hu, 
          -n_s, -n_e, -se_SMR_s, -se_SMR_e, -SMR_e)
 
 # View(regrs_p)
@@ -68,7 +70,7 @@ corrplot(cor(regrs_p), method = "ellipse")
 
 ## Parallel plot
 fct <- regrs%>% 
-  select(-geoid, -SMR_s, -SMR_e, -solar_E, -EV_E, -lihtc, -L_HOOD, -hh_low_mf_rent, -hh_high_sf_own,-non_us, -hu_ex_1000, -hu_blt1979, -hu_mwh, -edu, -wh_race, -af_race,-hu, -n_s, -n_e, -se_SMR_s, -se_SMR_e)
+  select(-geoid, -SMR_s, -SMR_e, -solar_E, -EV_E, -non_us, -hu_blt1979, -wh_race, -af_race,-hu, -n_s, -n_e, -se_SMR_s, -se_SMR_e)
 
 fa.parallel(fct,fa="fa",n.iter=100)
 
@@ -92,15 +94,15 @@ fn_fa_plt <- function(SMR, dat){
   ML_ord = c("ML1", "ML2", "ML3")
   if (str_detect(deparse(substitute(SMR)), "SMR_s")){
     for(i in seq_along(dat)){
-      plot(dat[,i], SMR, xlab = ML_ord[i], 
+      plot(dat[,i], log(SMR), xlab = ML_ord[i], 
            ylab = expression("Log of solar installation ("~log(Y[i]/E[i])~")"))
-      abline(lm(SMR ~ dat[,i]), col = "red")
+      abline(lm(log(SMR) ~ dat[,i]), col = "red")
       }
     } else {
       for(i in seq_along(dat)){
-        plot(dat[,i], SMR, xlab = ML_ord[i], 
+        plot(dat[,i], log(SMR), xlab = ML_ord[i], 
              ylab = expression("Log of EV charger installation ("~log(Y[i]/E[i])~")"))
-        abline(lm(SMR ~ dat[,i]), col = "red")
+        abline(lm(log(SMR) ~ dat[,i]), col = "red")
     }
   }
 }
@@ -114,7 +116,7 @@ fa_lm_re <- lm(regrs[["SMR_s"]] ~ dat[,1] + dat[,2]) %>%
 fa_glm_re <- glm(regrs[["n_s"]] ~ offset(log(regrs[["solar_E"]])) + dat[,1] + 
                    dat[,2], family= "poisson") %>% 
   tab_model()
-
+# summary(glm(regrs[["n_s"]] ~ offset(log(regrs[["solar_E"]])) + dat[,1] + dat[,2], family= "poisson"))
 
 # ## Leverage plot, Residual plot, and Half normal plot of square-root of Cook's D
 # par(mfrow=c(1,3))
@@ -201,14 +203,17 @@ g_perf_re <- ggplot(perf_df,aes(x=number_of_center,y=metrics)) +
 
 ## Regrsession 
 # names(regrs)
-# reg <- lm(SMR_s ~ hu + hu_own + single_unit+hu_blt1979+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+lihtc+high_income, data= regrs)
+# reg <- lm(SMR_s ~ hu_own + single_unit+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+lihtc+high_income, data= regrs)
 # MASS::stepAIC(reg)
-# reg <- lm(SMR_s ~ single_unit + hu_med_val + hu_ex_1000, data = regrs)
-reg <- glm(n_s ~ single_unit + hu_med_val + hu_ex_1000 + offset(log(solar_E)), data= regrs, family= "poisson")
+reg <- glm(n_s ~ hu_own + single_unit+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+high_income+ offset(log(solar_E)), data= regrs, family= "poisson")
+
+reg <- glm(n_s ~ single_unit+hu_med_val+edu+ hh_gini_index + offset(log(solar_E)), data= regrs, family= "poisson")
+
+reg <- glm(n_s ~ single_unit +hu_med_val+edu+ offset(log(solar_E)), data= regrs, family= "poisson")
 # summary(reg)
 
-va_glm_re <- glm(n_s ~ single_unit + hu_med_val + hu_ex_1000 + offset(log(solar_E)),
-                 data= regrs[-c(1,2,15)], family= "poisson") %>% 
+va_glm_re <- glm(n_s ~ single_unit + hu_med_val + edu + hh_gini_index + offset(log(solar_E)),
+                 data= regrs, family= "poisson") %>% 
   tab_model()
 
 ## Plot
@@ -216,12 +221,12 @@ fn_tot_plt <- function(regrs, dat, SMR){
   set.seed(5099)
   kme <- kmeans(dat,center=3)
   dat1 <- dat
-  dat1$SMR <- regrs[[SMR]]
+  dat1$ln_SMR <- log(regrs[[SMR]])
   dat1$cluster=as.factor(kme$cluster)
   ef <- list()
   for(i in 1:(length(names(dat1))-2)){
     ef[[i]] <- dat1 %>% 
-      ggplot(aes(x = !!sym(names(dat1)[i]), y = SMR, color = cluster)) +
+      ggplot(aes(x = !!sym(names(dat1)[i]), y = ln_SMR, color = cluster)) +
       geom_point(alpha = 0.4)+
       geom_smooth(span = 0.9)+ 
       theme_bw()
@@ -250,7 +255,7 @@ fn_lm_plt <- function(var, SMR, dat, regrs){
   c_reg$cluster <- as.factor(kme$cluster)
   
   clu <- c_reg %>% 
-    ggplot(aes(x = cluster, y = !!sym(SMR), color = cluster)) +
+    ggplot(aes(x = cluster, y = log(!!sym(SMR)), color = cluster)) +
     geom_boxplot() +
     ggtitle("Installation pattern per cluster")+ 
     theme_bw()
@@ -258,7 +263,7 @@ fn_lm_plt <- function(var, SMR, dat, regrs){
   ef <- list()
   for(i in seq_along(var)){
     ef[[i]] <- c_reg %>% 
-      ggplot(aes(x = !!sym(var[i]), y = !!sym(SMR), color = cluster)) +
+      ggplot(aes(x = !!sym(var[i]), y = log(!!sym(SMR)), color = cluster)) +
       geom_point(alpha = 0.4)+
       geom_smooth(span = 0.9)+ 
       theme_bw()
@@ -266,12 +271,24 @@ fn_lm_plt <- function(var, SMR, dat, regrs){
   return(list(clu, ef))
 }
 
-var_s <- c("single_unit", "hu_med_val", "hu_ex_1000")
+var_s <- c("single_unit", "hu_med_val", "edu")
 # fn_lm_plt(var_s, "SMR_s", dat, regrs)
 
 
 ##### EV
 # fn_fa_plt(regrs[["SMR_e"]], dat)
+
+## cor plot
+par(mfrow=c(1,1))
+regrs_p <- regrs %>% 
+  select(-geoid, -solar_E, -EV_E, -non_us, 
+         -hu_blt1979, -wh_race, -af_race, -hu, 
+         -n_s, -n_e, -se_SMR_s, -se_SMR_e, -SMR_s)
+
+# View(regrs_p)
+# str(regrs_p)
+corrplot(cor(regrs_p), method = "ellipse")
+
 
 ## FA regression
 fa_lme_re <- lm(regrs[["SMR_e"]] ~ dat[,1] + dat[,2] + dat[,3]) %>% 
@@ -280,23 +297,31 @@ fa_lme_re <- lm(regrs[["SMR_e"]] ~ dat[,1] + dat[,2] + dat[,3]) %>%
 fa_glme_re <- glm(regrs[["n_e"]] ~ offset(log(regrs[["EV_E"]])) + dat[,1] + 
                    dat[,2] + dat[,3], family= "poisson") %>% 
   tab_model()
+# summary(glm(regrs[["n_e"]] ~ offset(log(regrs[["EV_E"]])) + dat[,1] + dat[,2] + dat[,3], family= "poisson"))
 
 ## Plots
 # fn_tot_plt(regrs, dat, "SMR_e")
-var_e <- c("single_unit","hh_med_income", "hh_gini_index")
+var_e <- c("single_unit","hh_med_income", "edu", "hh_gini_index")
 # fn_lm_plt(var_e, "SMR_e", dat, regrs)
 
 ## Regrsession 
 # names(regrs)
 # rege <- lm(SMR_e ~ hu + hu_own + single_unit+hu_blt1979+hu_no_mor+hu_med_val+hu_ex_1000+edu+wh_race+af_race+non_us+hh_med_income+hh_gini_index+lihtc+high_income, data= regrs)
 # MASS::stepAIC(rege)
-# rege <- lm(SMR_e ~ single_unit + hh_med_income + hh_gini_index, data = regrs)
-rege <- glm(n_e ~ single_unit + hh_med_income + hh_gini_index + offset(log(EV_E)),
-            data= regrs[-c(1,2,15)], family= "poisson")
+# rege <- lm(SMR_e ~ hu_own + single_unit + hu_no_mor + hu_ex_1000 + edu + hh_med_income + hh_gini_index, data = regrs)
+
+rege <- glm(n_e ~ single_unit+hu_med_val+edu+hh_gini_index+ offset(log(EV_E)),
+            data= regrs, family= "poisson")
+
+rege <- glm(n_e ~ single_unit + edu + hh_med_income + hh_gini_index + offset(log(EV_E)),
+            data= regrs, family= "poisson")
+
+rege <- glm(n_e ~ single_unit + edu + hh_med_income + offset(log(EV_E)),
+            data= regrs, family= "poisson")
 # summary(rege)
 
-va_glme_re <- glm(n_e ~ single_unit + hh_med_income + hh_gini_index + offset(log(EV_E)),
-                  data= regrs[-c(1,2,15)], family= "poisson") %>% 
+va_glme_re <- glm(n_e ~ single_unit + edu + hu_med_val + hh_gini_index + offset(log(EV_E)),
+                  data= regrs, family= "poisson") %>% 
   tab_model()
 
 
@@ -305,3 +330,5 @@ save(regrs, regrs_p, fct, fa, dat, kme, g_perf_re, fa_lm_re, fa_glm_re, va_glm_r
      file = "./data/derived/reg.Rdata")
 
 load("./data/derived/reg.Rdata")
+write_csv(regrs, path = "./data/derived/regrs.csv" )
+write_csv(dat, path = "./data/derived/dat.csv" )

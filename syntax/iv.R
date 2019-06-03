@@ -160,8 +160,22 @@ regr <- seattle_simple %>%
   select(-incomeclass, -type, -own, -hh, -mwh) %>% 
   mutate(geoid = as.character(geoid))
 
-# summary(regr)
 
+# Scaling 
+
+stad <- function(var){
+  (var - mean(var))/sd(var)
+}
+
+temp <- regr[c(-1,-2,-15,-16,-18:-20)] 
+regr_scale <- sapply(temp, stad) %>% as.data.frame()
+regr_scale$geoid <- regr$geoid
+regr_scale$hu <- regr$hu
+
+# View(regr_scale)
+# summary(regr_scale)
+# str(regr_scale)
+# class(regr_scale)
 
 ## Plot
 # fhist <- regrs[, c(-1, -11)]
@@ -208,7 +222,7 @@ regr <- seattle_simple %>%
 #   theme(axis.text.x = element_blank(),
 #       axis.ticks.x = element_blank())
 
-save(county, seattle, seattle_simple, pot, regr, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
+save(county, seattle, seattle_simple, pot, regr, regr_scale, g_hh_iv, g_mwhu_iv, g_mwh_iv, file = "./data/derived/iv.Rdata")
 
 load("./data/derived/iv.Rdata")
 
