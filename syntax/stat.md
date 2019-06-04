@@ -1,11 +1,9 @@
 ---
-title: "Statistical Methods for Spatial Data: Residential Solar in Seattle"
+title: "Social Equity of Clean Energy Policies on Residential Solar in Seattle"
 author: "Yohan Min"
 output:
   html_document:
     keep_md: yes
-  pdf_document:
-    latex_engine: xelatex
 fontsize: 11pt
 header-includes:
   - \usepackage{fontspec}
@@ -28,7 +26,7 @@ To answer these questions, the present study performs a spatial analysis of the 
 
 # 2. DATA DESCRIPTION
 
-City of Seattle open data portal keeps the records of electrical permits and this study focuses on the data that were issued between 2003 and 2018 in Seattle, WA. Electrical permits are required when residential houses want to install solar systems on their house properties. Intensive data mining techniques made it possible to identify residential solar installation permits among the data sets. The data includes geographical coordinates (latitude and longitude), completion of installation dates of the solar system, and solar contractor who installed the system. Mapping the points of residential solar in the region can verify a certain pattern in installation. Residential housing units can be assumed to be evenly present across the region for the purpose of exploratory data analysis although they are not equally distributed. The density of point data of residential solar and its related `G estimate` show a clustered pattern across census track.
+City of Seattle open data portal keeps the records of electrical permits and this study focuses on the data that were issued between 2003 and 2018 in Seattle, WA. Electrical permits are required when residential houses want to install solar systems on their house properties. Intensive data mining techniques made it possible to identify residential solar installation permits among the data sets. The data includes geographical coordinates (latitude and longitude), completion of installation dates of the solar system, and solar contractor who installed the system. Mapping the points of residential solar in the region can verify a certain pattern in installation. Residential housing units can be assumed to be evenly present across the region for the purpose of exploratory data analysis although they are not equally distributed. The density of point data of residential solar and its related `G estimate` show a clustered pattern.
 
 
 
@@ -42,21 +40,27 @@ City of Seattle open data portal keeps the records of electrical permits and thi
 
 
 
+
+<div class="figure" style="text-align: center">
+<img src="stat_files/figure-html/unnamed-chunk-6-1.png" alt="Residential housing density in Seattle"  />
+<p class="caption">Residential housing density in Seattle</p>
+</div>
+
 After the point data was aggregated to the related census track, the data was examined in terms of the socioeconomic and housing characteristics based on the American Community Survey of the census (2011 - 2015 ACS 5-Year estimates). The rate of the residential solar installation in each census track is the dependent variable (`SMR_s`) in this study. Rest of variables are as follows.
 
-* `hu_own`: the proportion of owner-occupied housing units
-* `single_unit`: the proportion of single unit housings (single family houses)
-* `hu_no_mor`: the proportion of owner-occupied housing units without a mortgage
-* `hu_med_val`: the normalized median value of owner-occupied housing units
-* `hu_ex_1000`: the proportion of owner-occupied units with housing costs greater than $1000/month
-* `hh_med_income`: the normalized household median income
-* `hh_gini_index`: the household GINI Index of income inequality
-* `high_income`: the proportion of high income households
+* `hu_own`: owner-occupied housing units
+* `single_unit`: single unit housings (single family houses)
+* `hu_no_mor`: owner-occupied housing units without a mortgage
+* `hu_med_val`: median value of owner-occupied housing units
+* `edu`: population above high school degree
+* `hh_med_income`: household median income
+* `hh_gini_index`: household GINI Index of income inequality
+* `high_income`: high income households
 * `SMR_s`: the ratio of solar installation to the expected number of installations in regard to the total number of the residential housing units of the given census track.
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-5-1.png" alt="Histograms of variables"  />
+<img src="stat_files/figure-html/unnamed-chunk-7-1.png" alt="Histograms of variables"  />
 <p class="caption">Histograms of variables</p>
 </div>
 
@@ -64,11 +68,6 @@ After the point data was aggregated to the related census track, the data was ex
 # 3. METHODS
 
 The expected rate of residential solar per each census track is estimated based on the total number of housing units in Seattle and its residential solar numbers. Here the term, Standardized Mortality Ratio (SMR) can be considered to be the rate of residential solar in a census track in this study. It is defined by the number of residential solar over the expected number of residential solar given the estimated proportion, which is the total number of residential solar over the total number of housing units in Seattle. SMR shows a pattern of clustering similar to the pattern of the previous point data of residential solar.
-
-
-
-
-
 
 $$ SMR_i = \frac{Y_i}{E_i} $$
 
@@ -82,7 +81,7 @@ $$
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-8-1.png" alt="SMR and residuals of poisson model"  />
+<img src="stat_files/figure-html/unnamed-chunk-9-1.png" alt="SMR and residuals of poisson model"  />
 <p class="caption">SMR and residuals of poisson model</p>
 </div>
 
@@ -91,7 +90,7 @@ Moran's I test detects global clustering in the distribution of the rate of resi
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-9-1.png" alt="StaScan clustering detection"  />
+<img src="stat_files/figure-html/unnamed-chunk-10-1.png" alt="StaScan clustering detection"  />
 <p class="caption">StaScan clustering detection</p>
 </div>
 
@@ -100,7 +99,7 @@ Having verified that there is a spatial pattern in the residential solar rate, t
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-10-1.png" alt="Covariates correlation plot"  />
+<img src="stat_files/figure-html/unnamed-chunk-11-1.png" alt="Covariates correlation plot"  />
 <p class="caption">Covariates correlation plot</p>
 </div>
 
@@ -117,24 +116,24 @@ Factor analysis was performed to reduce dimension of variables in accordance wit
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-12-1.png" alt="Factor diagram"  />
+<img src="stat_files/figure-html/unnamed-chunk-13-1.png" alt="Factor diagram"  />
 <p class="caption">Factor diagram</p>
 </div>
 
 ----------------------------------------------------------------
      &nbsp;        Estimate   Std. Error   z value    Pr(>|z|)  
 ----------------- ---------- ------------ --------- ------------
- **(Intercept)**   -0.1145     0.02038     -5.615    1.965e-08  
+ **(Intercept)**   -0.1107     0.02038     -5.432    5.588e-08  
 
-     **ML1**        0.5227     0.02451      21.33    6.585e-101 
+     **ML1**        0.5678     0.02233      25.43    1.132e-142 
 
-     **ML2**        0.183      0.02243      8.157    3.424e-16  
+     **ML2**        0.1451      0.0216      6.718    1.843e-11  
 ----------------------------------------------------------------
 
 Table: Fitting generalized (poisson/log) linear model: n_s ~ ML1 + ML2 + offset(log(solar_E))
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-13-1.png" alt="SMR plots in factors"  />
+<img src="stat_files/figure-html/unnamed-chunk-14-1.png" alt="SMR plots in factors"  />
 <p class="caption">SMR plots in factors</p>
 </div>
 
@@ -145,32 +144,32 @@ It is obvious that the variables can be divided into three categories: (1) housi
 
 $$
 \begin{aligned}
-Y_i |\beta_{0},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}X_1+\beta_{2}X_2} \mbox{e}^{S_i + \epsilon_i}),\\ 
+Y_i |\beta_{0},\beta_{1},\beta_{2},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}I_{1i}+\beta_{2}I_{2i}} \mbox{e}^{S_i + \epsilon_i}),\\ 
 \epsilon_i | \sigma_\epsilon^{2} & \sim_{iid} \mbox{N}(0,\sigma_\epsilon^{2}),\\ 
 S_1,...,S_n | \sigma_s^{2} & \sim ~~~ \mbox{ICAR}(\sigma_s^{2}). 
 \end{aligned} 
 $$
 
-Integrated Nested Laplace Approximations (INLA) model takes into account of spatial dependencies and lognormal independent variance across census tracks. This model was set with priors such that 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.6. The result of the model fit confirms that the large variance is due to the spatial factor with $\phi$ of 0.96 in median.
+Integrated Nested Laplace Approximations (INLA) model takes into account of spatial dependencies and lognormal independent variance across census tracks. This model was set with priors such that 50% chance that the proportion of the spatial variance, $\phi$ is greater 0.5 and 1% chance that the total residual standard deviation is greater than 0.9. The result of the model fit confirms that the large variance is due to the spatial factor with $\phi$ of 0.96 in median.
 
 
-------------------------------------------------------------------
-       &nbsp;          mean    0.025quant   0.5quant   0.975quant 
--------------------- -------- ------------ ---------- ------------
-  **(Intercept)**     -2.283     -2.632      -2.281      -1.943   
+----------------------------------------------------------------------
+        &nbsp;            mean     0.025quant   0.5quant   0.975quant 
+----------------------- --------- ------------ ---------- ------------
+    **(Intercept)**      -0.3031    -0.3624     -0.3028     -0.2455   
 
- **I(single_unit)**   2.082      1.689       2.081       2.478    
+      **I(ML1)**         0.5549      0.4107      0.5548      0.6995   
 
- **I(hu_med_val)**    2.886      1.876       2.883       3.911    
+      **I(ML2)**          0.182      0.0429      0.1816      0.3232   
 
-    **Total SD**       0.58       0.71       0.5851      0.4843   
+ **Total residual sd**    0.662      0.8032      0.6676      0.5564   
 
-   **Phi for ID**     0.9504     0.7928      0.9692      0.9982   
-------------------------------------------------------------------
+    **Phi for ID**       0.9611      0.8347      0.9765      0.9988   
+----------------------------------------------------------------------
 
-Table: Fitting INLA model: n_s ~ offset(log(solar_E)) + single_unit + hu_med_val
+Table: Fitting INLA model: n_s ~ offset(log(solar_E)) + ML1 + ML2
 
-This model says that 30% increase in the percentage in single family housing proportion may incur 1.87 times increase in solar installation. Furthermore, 30% increase in the percentage in economic status may incur 2.37 times increase in solar installation. Even though this model considers the spatial dependency, the residuals for the model show a clustering pattern after eliminating the covariate terms from the fitted values.
+Even though this model considers the spatial dependency, the residuals for the model show a clustering pattern after eliminating the covariate terms from the fitted values.
 
 
 
@@ -183,7 +182,7 @@ K-means cluster analysis indicates a group of census tracks with the similar cha
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-17-1.png" alt="Covariate distributions with clustering"  />
+<img src="stat_files/figure-html/unnamed-chunk-18-1.png" alt="Covariate distributions with clustering"  />
 <p class="caption">Covariate distributions with clustering</p>
 </div>
 
@@ -192,20 +191,25 @@ K-means cluster analysis indicates a group of census tracks with the similar cha
 
 Geographically Weighted Regression (GWR) model finally confirms that the residuals of the model have less chance of spatial dependency with respect to the insignificant `p-value` of Moran's I in 0.05 significance level. This model has even higher `R-squared` value compared to the previous models. GWR model entails consideration of spatial dependence in a local level by changing the coefficient values of covariates without involvement of explicit spatial term to the model. Below figures show the variance of coefficient values across the census tracks. The intensity of each map of covariates indicates the sensitivity of the concerned covariate in terms of the rate of residential solar. Single family house rate impacts more on the central Seattle area while North and South Seattle are more sensitive to the house median value with respect to solar panel installation on the residential houses.
 
+$$
+\begin{aligned}
+Y(s) = E(s)\mbox{e}^{(\beta_{0}+\beta_{1}(s)X_1(s)+\beta_{2}(s)X_2(s)+\epsilon(s))}
+\end{aligned} 
+$$
 
 
 
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-21-1.png" alt="Clustering and GWR residuals"  />
+<img src="stat_files/figure-html/unnamed-chunk-22-1.png" alt="Clustering and GWR residuals"  />
 <p class="caption">Clustering and GWR residuals</p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-22-1.png" alt="Coefficient variation of covariates"  />
+<img src="stat_files/figure-html/unnamed-chunk-23-1.png" alt="Coefficient variation of covariates"  />
 <p class="caption">Coefficient variation of covariates</p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-23-1.png" alt="GWR different impact of covariates in Seattle"  />
+<img src="stat_files/figure-html/unnamed-chunk-24-1.png" alt="GWR different impact of covariates in Seattle"  />
 <p class="caption">GWR different impact of covariates in Seattle</p>
 </div>
 
@@ -227,10 +231,6 @@ Caperton, Richard W., Mari Hern, and ez. “The Electrical Divide: New Energy Te
 # APPENDIX
 
 
-<div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-24-1.png" alt="Factors in tersm of covariates"  />
-<p class="caption">Factors in tersm of covariates</p>
-</div>
 
 -------------------------------------------------------------------------------
  Test statistic       P value       Alternative hypothesis   Moran I statistic 
@@ -248,23 +248,10 @@ Table: Residuals of poisson model without covariates (continued below)
 ------------------------
 
 
-----------------------------------------------------------------
-     &nbsp;        Estimate   Std. Error   z value    Pr(>|z|)  
------------------ ---------- ------------ --------- ------------
- **(Intercept)**    -2.006     0.06964     -28.81    1.842e-182 
-
- **single_unit**    2.112      0.07548      27.99    2.462e-172 
-
- **hu_med_val**     2.454       0.1655      14.83    9.284e-50  
-----------------------------------------------------------------
-
-Table: Fitting generalized (poisson/log) linear model: n_s ~ single_unit + hu_med_val + offset(log(solar_E))
-
-
 -------------------------------------------------------------------------------
  Test statistic       P value       Alternative hypothesis   Moran I statistic 
 ---------------- ----------------- ------------------------ -------------------
-     6.122        4.624e-10 * * *          greater                0.3219       
+     7.214        2.725e-13 * * *          greater                0.3811       
 -------------------------------------------------------------------------------
 
 Table: Residuals of poission model with covariates (continued below)
@@ -273,23 +260,23 @@ Table: Residuals of poission model with covariates (continued below)
 ------------------------
  Expectation   Variance 
 ------------- ----------
-  -0.007463    0.002895 
+  -0.007463    0.002902 
 ------------------------
 
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-25-1.png" alt="Residential solar density in Seattle"  />
-<p class="caption">Residential solar density in Seattle</p>
+<img src="stat_files/figure-html/unnamed-chunk-25-1.png" alt="Factors in tersm of covariates"  />
+<p class="caption">Factors in tersm of covariates</p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="stat_files/figure-html/unnamed-chunk-26-1.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-2.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-3.png" alt="Mapping of random effects and residuals"  />
+<img src="stat_files/figure-html/unnamed-chunk-26-1.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-2.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-3.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-4.png" alt="Mapping of random effects and residuals"  /><img src="stat_files/figure-html/unnamed-chunk-26-5.png" alt="Mapping of random effects and residuals"  />
 <p class="caption">Mapping of random effects and residuals</p>
 </div>
 
------------------------------------------------------------------------
- Test statistic   P value   Alternative hypothesis   Moran I statistic 
----------------- --------- ------------------------ -------------------
-     1.363        0.08647          greater                0.06515      
------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+ Test statistic       P value       Alternative hypothesis   Moran I statistic 
+---------------- ----------------- ------------------------ -------------------
+      3.49        0.0002416 * * *          greater                0.1783       
+-------------------------------------------------------------------------------
 
 Table: GWR residual residuals (continued below)
 
@@ -297,7 +284,7 @@ Table: GWR residual residuals (continued below)
 ------------------------
  Expectation   Variance 
 ------------- ----------
-  -0.007463    0.002839 
+  -0.007463    0.002833 
 ------------------------
 
 <div class="figure" style="text-align: center">
@@ -310,5 +297,5 @@ Table: GWR residual residuals (continued below)
 ---
 title: "stat.R"
 author: "Yohan_Min"
-date: "Mon Apr 08 19:00:07 2019"
+date: "Tue Jun 04 15:45:41 2019"
 ---

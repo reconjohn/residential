@@ -2,6 +2,8 @@
 #' title: "Social Equity of Clean Energy Policies on Residential Solar in Seattle"
 #' author: "Yohan Min"
 #' output:
+#'   html_document:
+#'     keep_md: yes
 #' fontsize: 11pt
 #' header-includes:
 #'   - \usepackage{fontspec}
