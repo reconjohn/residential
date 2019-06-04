@@ -24,7 +24,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Statistical Methods for Spatial Data: Residential Solar in Seattle},
+            pdftitle={Social Equity of Clean Energy Policies on Residential Solar in Seattle},
             pdfauthor={Yohan Min},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -75,7 +75,7 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{Statistical Methods for Spatial Data: Residential Solar in Seattle}
+  \title{Social Equity of Clean Energy Policies on Residential Solar in Seattle}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
     \author{Yohan Min}
@@ -83,7 +83,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{Mon May 27 17:40:34 2019}
+    \date{Tue Jun 04 15:35:15 2019}
 
 \usepackage{fontspec}
 \usepackage{float}
@@ -419,7 +419,7 @@ better with the two covariates than factors.
 
 \[
 \begin{aligned}
-Y_i |\beta_{0},\beta_{1},\beta_{2},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}X_1i+\beta_{2}X_2i} \mbox{e}^{S_i + \epsilon_i}),\\ 
+Y_i |\beta_{0},\beta_{1},\beta_{2},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}I_{1i}+\beta_{2}I_{2i}} \mbox{e}^{S_i + \epsilon_i}),\\ 
 \epsilon_i | \sigma_\epsilon^{2} & \sim_{iid} \mbox{N}(0,\sigma_\epsilon^{2}),\\ 
 S_1,...,S_n | \sigma_s^{2} & \sim ~~~ \mbox{ICAR}(\sigma_s^{2}). 
 \end{aligned} 

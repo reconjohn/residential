@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.11.22)  27 MAY 2019 17:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2018.11.22)  4 JUN 2019 15:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -760,7 +760,7 @@ l.45 \msg_fatal:nn {fontspec} {cannot-use-pdftex}
 Here is how much of TeX's memory you used:
  18990 strings out of 494585
  319553 string characters out of 6176115
- 354665 words of memory out of 5000000
+ 354699 words of memory out of 5000000
  22556 multiletter control sequences out of 15000+600000
  533407 words of font info for 26 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
