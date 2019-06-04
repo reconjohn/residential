@@ -1,5 +1,5 @@
 #' ---
-#' title: "Statistical Methods for Spatial Data: Residential Solar in Seattle"
+#' title: "Social Equity of Clean Energy Policies on Residential Solar in Seattle"
 #' author: "Yohan Min"
 #' output:
 #' fontsize: 11pt
