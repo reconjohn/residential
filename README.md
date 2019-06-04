@@ -14,7 +14,7 @@ Hotspot analysis and geographically weighted regression (GWR) would be employed 
 
 # Results 
 * [Poster](https://github.com/reconjohn/residential/blob/master/docs/Poster.1.pdf)
-* [Paper](https://github.com/reconjohn/residential/blob/master/syntax/stat.pdf)
+* [Paper](https://github.com/reconjohn/residential/blob/master/syntax/stat.md)
 
 # Discussions
 On going.. 
