@@ -23,7 +23,7 @@ myBib <- ReadBib("../../citation.bib", check = FALSE)
 
 class: normal
 
-# Context
+# Content
 
 .medium[* Background: Energy divide
 * Introduction: Social equity on residential solar in Seattle
