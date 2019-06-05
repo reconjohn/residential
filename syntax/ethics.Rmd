@@ -109,7 +109,7 @@ class: normal
 * Indentifying the vulnerable communities. 
 
 ```{r echo=FALSE}
-knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-22-1.png", dpi= 120)
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-26-3.png", dpi= 120)
 knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-24-1.png", dpi= 120)
 
 ```
