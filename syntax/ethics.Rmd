@@ -124,11 +124,11 @@ class: normal
 
 ## Issues: Prudentialist ethics
 
-.larger[* Utilitarianism: more efficient to use resources to maximize the global benefits thus, current distribution of PV gets along with this ethical principle casuing the opposition of the virtual ethic, social justice. 
+.larger[* Utilitarianism: more efficient to use resources to maximize the global benefits (current distribution of solar) casuing the opposition of the virtual ethic, social justice. 
 
-* Responsive cohesion: by taking advantage of a process of adjustment, adaptation, and compromising the different objectives and challenges of the both principles. 
+* Responsive cohesion: by process of adjustment, adaptation, and compromising the different objectives and challenges of the both principles. 
 
-* Prudentialist ethic: address the issue by encouraging decentralized and diversified energy systems to enhance the community resilience. After all, community solar will address the ethical judgement.]     
+* Prudentialist ethic: encouraging decentralized and diversified energy systems to enhance the community resilience. After all, community solar will address the ethical judgement.]     
 
 ---
 class: normal
@@ -149,4 +149,4 @@ class: normal
 * Habitus theory: habitus is ingrained habits, skills, and dispositions. It is the way that individuals perceive the social world around them and react to it. These dispositions are usually shared by people with similar backgrounds.]
 
 
-# pagedown::chrome_print("C:/Users/Yohan_Min/Documents/publication/residential/syntax/ethics.html")
+<!--pagedown::chrome_print("C:/Users/Yohan_Min/Documents/publication/residential/syntax/ethics.html")-->
