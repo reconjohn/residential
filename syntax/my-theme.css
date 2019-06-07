@@ -23,15 +23,15 @@
   background-size: contain; 
 }
 .normal { /* my mod */
-  background-color: black;
-  color: yellow;
+  background-color: white;
+  color: #4f4e4e;
 }
 body { font-family: 'Open Sans', sans-serif; 
 }
 h1, h2, h3 {
   font-family: 'Yanone Kaffeesatz';
   font-weight: normal;    
-  color: #d6d6d6;
+  color: #aaa7a7;
 }
 a, a > code {
   color: rgb(249, 38, 114);
@@ -47,12 +47,12 @@ a, a > code {
 .remark-code-line-highlighted     { background-color: #ffff88; }
 
 .inverse {
-  background-color: #272822;
-  color: #d6d6d6;
-  text-shadow: 0 0 20px #333;
+  background-color: white;
+  color: #333;
+  text-shadow: 0 0 20px #272822;
 }
 .inverse h2, .inverse h3 {      /* my mod: small author and date */
-  color: #f3f3f3;
+  color: #8e8e8e;
 }
 .inverse h1  {                  /* my mod: big title */
   color: #f3f3f3;
