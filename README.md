@@ -15,7 +15,8 @@ Hotspot analysis and geographically weighted regression (GWR) would be employed 
 # Results 
 * [Poster](https://github.com/reconjohn/residential/blob/master/docs/Poster.1.pdf)
 * [Paper](https://github.com/reconjohn/residential/blob/master/syntax/stat.md)
-* [Ethics Slides](https://github.com/reconjohn/residential/blob/master/syntax/ethics.pdf)
+* [Ethics Paper](https://github.com/reconjohn/residential/blob/master/syntax/Ethic.pdf)
+* [Ethics Slides](https://github.com/reconjohn/residential/blob/master/syntax/ethics_pt.pdf)
 * [Analysis Slides](https://github.com/reconjohn/residential/blob/master/syntax/test_files/social_equity_solar.pdf)
 
 # Discussions
