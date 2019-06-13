@@ -118,7 +118,6 @@ scaled_den = (den$v - mean(den$v))/ sd(den$v)
 scaled_dento = (dento$v - mean(dento$v))/ sd(dento$v)
 den@data$v <- (scaled_den - scaled_dento) 
 plot(den, col=blue2red(30))
-title("Residential solar density in Seattle")
 # plot3d(cbind(den$s1, den$s2, den$v), col = rainbow(7), type = "l", size= 1.5)
 
 

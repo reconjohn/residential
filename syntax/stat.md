@@ -297,5 +297,5 @@ Table: GWR residual residuals (continued below)
 ---
 title: "stat.R"
 author: "Yohan_Min"
-date: "Tue Jun 04 15:45:41 2019"
+date: "2019-06-13"
 ---

@@ -1,0 +1,135 @@
+---
+title: "Social Justice on Residential Solar"
+author: "Yohan Min"
+date: "6/6/2019"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Content
+
+* Background: Energy divide
+* Introduction: Social equity on residential solar in Seattle
+* Issues: Prudentialist ethics 
+* How to address
+* Community solar
+* Final notes
+
+
+## Background: Energy divide
+
+This transition to the new energy system could lead to undesirable effects on some communities as shown in the case of telecommunication. If these deeply transformative changes in the U.S. power sector are not managed properly, 21st century America could see an emerging electrical divide like the digital divide of the late 20th century. Committed leadership to implement a new policy in regard to the transition is required to avoid the uneven distribution of the service.
+
+
+
+## Introduction: Social equity on residential solar in Seattle
+
+* Clustering pattern on distribution of residential solar in Seattle.
+
+```{r echo=FALSE}
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-6-1.png", dpi= 130)
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-3-1.png", dpi= 160)
+
+```
+
+
+
+## Introduction: Social equity on residential solar in Seattle
+
+* Socio-economic characteristics into 3 factors. 
+
+```{r echo=FALSE}
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-7-1.png", dpi= 100)
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-13-1.png", dpi= 120)
+
+```
+
+
+## Introduction: Social equity on residential solar in Seattle
+
+* Spatial autocorrelation model (INLA)
+
+$$
+\begin{aligned}
+Y_i |\beta_{0},\beta_{1},\beta_{2},S_i,\epsilon_i & \sim_{ind} \mbox{Poisson}(E_i \mbox{e}^{\beta_{0}+\beta_{1}I_{1i}+\beta_{2}I_{2i}} \mbox{e}^{S_i + \epsilon_i}),\\ 
+\epsilon_i | \sigma_\epsilon^{2} & \sim_{iid} \mbox{N}(0,\sigma_\epsilon^{2}),\\ 
+S_1,...,S_n | \sigma_s^{2} & \sim ~~~ \mbox{ICAR}(\sigma_s^{2}). 
+\end{aligned}
+$$
+
+* Geographically weighted regression (GWR) 
+
+$$
+\begin{aligned}
+Y(s) = E(s)\mbox{e}^{(\beta_{0}+\beta_{1}(s)X_1(s)+\beta_{2}(s)X_2(s)+\epsilon(s))}
+\end{aligned}
+$$
+
+
+## Introduction: Social equity on residential solar in Seattle
+
+* 3 clusters in terms of 3 factors.  
+
+```{r echo=FALSE}
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-18-1.png", dpi= 120)
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-22-1.png", dpi= 130)
+
+```
+
+
+
+## Introduction: Social equity on residential solar in Seattle
+
+* Indentifying the vulnerable communities. 
+
+```{r echo=FALSE}
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-26-3.png", dpi= 140)
+knitr::include_graphics("./stat_files/figure-html/unnamed-chunk-24-1.png", dpi= 140)
+
+```
+
+
+
+## Why care?
+
+* Vulnerability: centralized energy production may contribute to vulnerability of the current urban form as most of subsystems of human activities are relying on the sole energy production. The more dependent to a sole energy production, the more vulnerable a system would be facing interruptions.
+
+* Resilience: climate change and its impact on urban systems on resilience abilities (preparation, absorption, recovery, and adaptation) to ensure sustainability related dimensions (availability, accessibility, affordability, and acceptability). Availability for sustainable dimension and preparation for resilience ability are the most critical.
+
+
+## Issues: Prudentialist ethics
+
+* Utilitarianism: more efficient to use resources to maximize the global benefits (current distribution of solar) casuing the opposition of the virtual ethic, social justice. 
+
+* Responsive cohesion: by process of adjustment, adaptation, and compromising the different objectives and challenges of the both principles. 
+
+* Prudentialist ethic: encouraging decentralized and diversified energy systems to enhance the community resilience. After all, community solar will address the ethical judgement.   
+
+
+## How to address
+
+* Spatial diversification: the need of the polycentric governance as it is critically related to socio-economic actors. Spatial diversity in a portfolio can reduce investment risk.
+
+* Decentralization: decentralized energy network has been increasing due to efficient end-use appliance and low-cost photovoltaic supported by ICT (mobile phone) and virtual financial services. This will enhance the energy accessibility considering the fact that the currently 1.3 billion people lack access to electricity.
+
+
+
+## Community solar
+
+* Micro-grids: shows controllable and islandable micro-grid systems would improve the resiliency of power grids in extreme conditions. The study introduced 4 indexes to figure out the resilience improvement by introducing micro-grids to the power grid system.
+
+* Community solar: 49% of households and 48% of businesses cannot host a PV system of adequate size on their property or virtually net meter an entire system themselves. By opening the market to these customers, shared solar could represent 32%-49% of the distributed PV market in 2020.
+
+## Final notes 
+
+* Veil of ingnorance (John Rawls) - social justice 
+
+* Habitus theory: habitus is ingrained habits, skills, and dispositions. It is the way that individuals perceive the social world around them and react to it. These dispositions are usually shared by people with similar backgrounds
+
+
+
+## References
+
